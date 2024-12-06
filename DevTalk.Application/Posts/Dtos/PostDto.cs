@@ -1,0 +1,18 @@
+﻿using DevTalk.Domain.Entites;
+
+namespace DevTalk.Application.Posts.Dtos;
+
+public class PostDto
+{
+    public string PostId { get; set; } = default!;
+    public string Title { get; set; } = default!;
+    public string Body { get; set; } = default!;
+    public DateTime PostedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public ICollection<PostMedia>? PostMedias { get; set; }
+    public ICollection<PostVotes>? Votes { get; set; }
+    public ICollection<Comment>? Comments { get; set; }
+    public string UserId { get; set; } = default!;
+    public string Username { get; set; } = default!;
+
+}
