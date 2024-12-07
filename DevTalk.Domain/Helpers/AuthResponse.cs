@@ -1,4 +1,6 @@
-﻿namespace DevTalk.Domain.Helpers;
+﻿using System.Text.Json.Serialization;
+
+namespace DevTalk.Domain.Helpers;
 
 public class AuthResponse
 {
@@ -12,6 +14,10 @@ public class AuthResponse
     public string Email     { get; set; } = default!;
     public List<string> Roles { get; set; }
     public string Token { get; set; } = default!;
-    public DateTime ExpiresOne { get; set; }
+   // public DateTime ExpiresOne { get; set; }
+
+    [JsonIgnore]
+    public string RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiration { get; set; }
 
 }

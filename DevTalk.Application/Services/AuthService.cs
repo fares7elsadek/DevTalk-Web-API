@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace DevTalk.Application.Services;
@@ -44,10 +45,26 @@ public class AuthService : IAuthService
             issuer:jwt.Issure,
             audience:jwt.Audience,
             claims:claims,
-            expires:DateTime.Now.AddDays(jwt.DurationInDays),
+            expires:DateTime.Now.AddMinutes(jwt.DurationInDays),
             signingCredentials: SigningCredentials
             );
         return jwtSecurityToken;
+    }
+
+    public RefreshToken GenerateRefreshToken()
+    {
+        var randomNumber = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(randomNumber);
+        }
+        var token = Convert.ToBase64String(randomNumber);
+        return new RefreshToken
+        {
+            Token= token,
+            ExpiresOn = DateTime.UtcNow.AddDays(10),
+            CreatedOn = DateTime.UtcNow,
+        };
     }
 
     public async Task<AuthResponse> GetJwtToken(User user,List<string> roles)
@@ -58,9 +75,22 @@ public class AuthService : IAuthService
         authResponse.IsAuthenticated = true;
         authResponse.Email = user.Email;
         authResponse.Username = user.UserName;
-        authResponse.ExpiresOne = jwtSecurityToken.ValidTo;
         authResponse.Roles = roles;
         authResponse.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        if(user.RefreshTokens.Any(x => x.IsActive))
+        {
+            var activeRefreshToken = user.RefreshTokens.FirstOrDefault(t => t.IsActive);
+            authResponse.RefreshToken = activeRefreshToken.Token;
+            authResponse.RefreshTokenExpiration = activeRefreshToken.ExpiresOn;
+        }
+        else
+        {
+            var token = GenerateRefreshToken();
+            authResponse.RefreshToken = token.Token;
+            authResponse.RefreshTokenExpiration = token.ExpiresOn;
+            user.RefreshTokens.Add(token);
+            await userManager.UpdateAsync(user);
+        }
         return authResponse;
     }
 }

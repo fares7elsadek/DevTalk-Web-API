@@ -10,11 +10,8 @@ public static class  ServiceCollectionExtensions
     {
         builder.Services.AddScoped<ErrorHandlingMiddleware>();
         builder.Host.SeriLogConfigurations();
-        builder.Services.AddControllers()
-            .AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
+        builder.Services.AddControllers();
+            
 
         builder.Services.AddSwaggerGen(c =>
         {

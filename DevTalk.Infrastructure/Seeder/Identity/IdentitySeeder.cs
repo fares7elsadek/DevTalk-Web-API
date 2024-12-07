@@ -1,5 +1,6 @@
 ﻿
 using DevTalk.Domain.Constants;
+using DevTalk.Domain.Entites;
 using DevTalk.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 
@@ -32,4 +33,5 @@ public class IdentitySeeder(AppDbContext db) : IIdentitySeeder
             }
         ];
     }
+    
 }

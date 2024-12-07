@@ -19,4 +19,5 @@ public class User:IdentityUser
     public ICollection<Comment> Comments { get; set; }
     public ICollection<PostVotes> PostVotes { get; set; }
     public ICollection<CommentVotes> CommentsVotes { get; set; }
+    public List<RefreshToken>? RefreshTokens { get; set; }
 }

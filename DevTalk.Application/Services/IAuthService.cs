@@ -8,4 +8,5 @@ public interface IAuthService
 {
     Task<JwtSecurityToken> CreatJwtToken(User user);
     Task<AuthResponse> GetJwtToken(User user,List<string> roles);
+    RefreshToken GenerateRefreshToken();
 }

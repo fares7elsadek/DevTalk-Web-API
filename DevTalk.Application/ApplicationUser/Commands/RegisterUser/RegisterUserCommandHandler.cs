@@ -41,7 +41,7 @@ public class RegisterUserCommandHandler(UserManager<User> userManager,
         {
             Message = "User registered successfully",
             Email = user.Email,
-            ExpiresOne = JwtSecurityToken.ValidTo,
+            //ExpiresOne = JwtSecurityToken.ValidTo,
             IsAuthenticated = true,
             Roles = new List<string> { UserRoles.User },
             Token = new JwtSecurityTokenHandler().WriteToken(JwtSecurityToken),

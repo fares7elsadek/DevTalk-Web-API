@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DevTalk.Application.ApplicationUser.Commands.LoginUser;
+using Swashbuckle.AspNetCore.Annotations;
+using DevTalk.Application.ApplicationUser.Commands.CreateRefreshToken;
 
 namespace DevTalk.API.Controllers
 {
@@ -33,6 +35,8 @@ namespace DevTalk.API.Controllers
             var authResponse = await _mediator.Send(command);
             if (!authResponse.IsAuthenticated)
                 return BadRequest(authResponse);
+            if (!string.IsNullOrEmpty(authResponse.RefreshToken))
+                SetRefreshTokenInCookie(authResponse.RefreshToken, authResponse.RefreshTokenExpiration);
             return Ok(authResponse);
         }
 
@@ -47,7 +51,35 @@ namespace DevTalk.API.Controllers
             var authResponse = await _mediator.Send(command);
             if (!authResponse.IsAuthenticated)
                 return BadRequest(authResponse);
+            if (!string.IsNullOrEmpty(authResponse.RefreshToken))
+                SetRefreshTokenInCookie(authResponse.RefreshToken, authResponse.RefreshTokenExpiration);
             return Ok(authResponse);
+        }
+
+        [HttpGet("refreshToken")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<AuthResponse>> CreateRefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshToken))
+                throw new CustomeException("Invalid token");
+            var result = await _mediator.Send(new CreateRefreshTokenCommand(refreshToken));
+            SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+            return Ok(result);
+        }
+
+        [SwaggerIgnore]
+        public void SetRefreshTokenInCookie(string refreshToken,DateTime expires)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = expires
+            };
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
     }
 }
