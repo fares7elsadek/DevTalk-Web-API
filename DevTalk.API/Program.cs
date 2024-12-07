@@ -1,12 +1,10 @@
-
-
 using DevTalk.API.Extensions;
 using DevTalk.API.Middlewares;
 using DevTalk.Application.Extensions;
 using DevTalk.Domain.Entites;
 using DevTalk.Infrastructure.Extensions;
 using DevTalk.Infrastructure.Seeder;
-using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 
 namespace DevTalk.API;
@@ -22,7 +20,11 @@ public class Program
         builder.Services.AddPresentation();
         builder.Host.SeriLogConfigurations();
         builder.Services.AddApplication();
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
         
         builder.Services.AddOpenApi();
 
@@ -37,6 +39,13 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+            RequestPath = "/Resources"
+        });
+        app.UseCors();
         app.MapGroup("api/identity")
             .WithTags("Identity").MapIdentityApi<User>();
         app.UseAuthorization();

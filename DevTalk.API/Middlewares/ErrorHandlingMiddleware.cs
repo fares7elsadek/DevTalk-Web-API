@@ -29,6 +29,15 @@ public class ErrorHandlingMiddleware : IMiddleware
             await context.Response.WriteAsJsonAsync(apiResponse);
             Log.Warning(ex.Message);
         }
+        catch(CustomeException ex)
+        {
+            apiResponse.StatusCode = HttpStatusCode.Forbidden;
+            apiResponse.IsSuccess = false;
+            apiResponse.Errors.Add(ex.Message);
+            context.Response.StatusCode = 403;
+            await context.Response.WriteAsJsonAsync(apiResponse);
+            Log.Warning(ex.Message);
+        }
         catch (Exception ex)
         {
             Log.Fatal(ex, ex.Message);

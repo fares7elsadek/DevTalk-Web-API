@@ -1,8 +1,12 @@
 ﻿using DevTalk.Application.Posts.Dtos;
 using DevTalk.Application.Posts.Queries.GetAllPosts;
+using DevTalk.Application.Services;
+using DevTalk.Application.User;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -19,6 +23,21 @@ public static class ServiceCollectionExtensions
         services.AddMediatR(cfg => 
         cfg.RegisterServicesFromAssemblies(assemply));
         services.AddHttpContextAccessor();
+        services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IUserContext, UserContext>();
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(
+            policy =>
+            {
+                policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader(); 
+            });
+        });
+        services.Configure<FormOptions>(options =>
+        {
+            options.MultipartBodyLengthLimit = 5 * 1024 * 1024;
+        });
+        
     }
 
     public static void SeriLogConfigurations(this IHostBuilder host)

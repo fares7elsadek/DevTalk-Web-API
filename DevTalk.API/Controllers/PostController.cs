@@ -1,9 +1,11 @@
-﻿using DevTalk.Application.Posts.Dtos;
+﻿using DevTalk.Application.Posts.Commands.CreatePosts;
+using DevTalk.Application.Posts.Dtos;
 using DevTalk.Application.Posts.Queries.GetAllPosts;
 using DevTalk.Application.Posts.Queries.GetPostById;
+using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -43,6 +45,7 @@ namespace DevTalk.API.Controllers
             return Ok(apiResponse);
         }
         [HttpGet("{PostId}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -53,6 +56,19 @@ namespace DevTalk.API.Controllers
             apiResponse.StatusCode = HttpStatusCode.OK;
             apiResponse.Result = Post;
             return Ok(apiResponse);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> CreatePost([FromForm]CreatePostCommand command)
+        {
+            var PostDto = await _mediator.Send(command);
+            if (PostDto == null) throw new CustomeException("Something wrong has happened");
+            var PostId = PostDto.PostId;
+            return CreatedAtAction(nameof(GetPostById),new { PostId },null);
         }
     }
 }
