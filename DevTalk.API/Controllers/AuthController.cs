@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using DevTalk.Application.ApplicationUser.Commands.LoginUser;
 
 namespace DevTalk.API.Controllers
 {
@@ -28,6 +29,20 @@ namespace DevTalk.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<AuthResponse>> RegisterUser([FromBody]RegisterUserCommand command)
+        {
+            var authResponse = await _mediator.Send(command);
+            if (!authResponse.IsAuthenticated)
+                return BadRequest(authResponse);
+            return Ok(authResponse);
+        }
+
+        [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<AuthResponse>> LoginUser([FromBody] LoginUserCommand command)
         {
             var authResponse = await _mediator.Send(command);
             if (!authResponse.IsAuthenticated)

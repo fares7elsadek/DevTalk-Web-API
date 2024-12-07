@@ -49,4 +49,18 @@ public class AuthService : IAuthService
             );
         return jwtSecurityToken;
     }
+
+    public async Task<AuthResponse> GetJwtToken(User user,List<string> roles)
+    {
+        AuthResponse authResponse = new AuthResponse();
+        var jwtSecurityToken = await CreatJwtToken(user);
+        authResponse.Message = "User logged in succeefully";
+        authResponse.IsAuthenticated = true;
+        authResponse.Email = user.Email;
+        authResponse.Username = user.UserName;
+        authResponse.ExpiresOne = jwtSecurityToken.ValidTo;
+        authResponse.Roles = roles;
+        authResponse.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        return authResponse;
+    }
 }
