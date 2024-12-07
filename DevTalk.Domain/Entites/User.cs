@@ -11,8 +11,8 @@ public class User:IdentityUser
         PostVotes = new HashSet<PostVotes>();
         CommentsVotes = new HashSet<CommentVotes>();
     }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; } 
+    public string FirstName { get; set; } = default!;
+    public string LastName { get; set; } = default!;
     public string? Avatar { get; set; }
     public DateOnly? BirthOfDate { get; set; }
     public ICollection<Post> Posts { get; set; }

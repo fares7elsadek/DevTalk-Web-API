@@ -21,6 +21,6 @@ public class CommentConfigurations : IEntityTypeConfiguration<Comment>
         builder.HasMany(x => x.Votes)
             .WithOne(x => x.Comment)
             .HasForeignKey(x => x.CommentId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

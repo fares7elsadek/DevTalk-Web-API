@@ -27,7 +27,7 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         builder.HasMany(x => x.Comments)
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasMany(x => x.PostVotes)
             .WithOne(x => x.User)

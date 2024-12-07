@@ -1,4 +1,4 @@
-﻿namespace DevTalk.Application.User;
+﻿namespace DevTalk.Application.ApplicationUser;
 
 public interface IUserContext
 {

@@ -7,6 +7,10 @@ using DevTalk.Domain.Entites;
 using DevTalk.Infrastructure.Seeder;
 using DevTalk.Domain.Repositories;
 using DevTalk.Infrastructure.Repositories;
+using DevTalk.Domain.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 namespace DevTalk.Infrastructure.Extensions;
@@ -20,10 +24,30 @@ public static class ServiceCollectionExtensions
         {
             options.UseSqlServer(connectionString);
         });
-        services.AddIdentityApiEndpoints<User>()
-            .AddRoles<IdentityRole>()
+        services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>();
         services.AddScoped<IDevTalkSeeder,DevTalkSeeder>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.Configure<JwtOptions>(configuration.GetSection("JWT"));
+        services.AddAuthentication(opt =>
+        {
+            opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddJwtBearer(opt =>
+            {
+                opt.RequireHttpsMetadata = false;
+                opt.SaveToken = false;
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = configuration["JWT:Issure"],
+                    ValidAudience= configuration["JWT:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
+                };
+            });
     }
 }

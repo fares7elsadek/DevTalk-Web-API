@@ -1,4 +1,6 @@
 ﻿using DevTalk.Application.Posts.Commands.CreatePosts;
+using DevTalk.Application.Posts.Commands.DeletePost;
+using DevTalk.Application.Posts.Commands.UpdatePosts;
 using DevTalk.Application.Posts.Dtos;
 using DevTalk.Application.Posts.Queries.GetAllPosts;
 using DevTalk.Application.Posts.Queries.GetPostById;
@@ -22,7 +24,7 @@ namespace DevTalk.API.Controllers
             _mediator = mediator;
             apiResponse = new ApiResponse();
         }
-        [HttpGet]
+        [HttpGet("all")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -45,7 +47,6 @@ namespace DevTalk.API.Controllers
             return Ok(apiResponse);
         }
         [HttpGet("{PostId}")]
-        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -58,7 +59,8 @@ namespace DevTalk.API.Controllers
             return Ok(apiResponse);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -69,6 +71,35 @@ namespace DevTalk.API.Controllers
             if (PostDto == null) throw new CustomeException("Something wrong has happened");
             var PostId = PostDto.PostId;
             return CreatedAtAction(nameof(GetPostById),new { PostId },null);
+        }
+
+        [HttpPatch("update")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse>> UpdatePost([FromBody]UpdatePostsCommand command)
+        {
+            await _mediator.Send(command);
+            apiResponse.IsSuccess = true;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = null;
+            return Ok(apiResponse);
+        }
+
+
+        [HttpPatch("delete/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse>> DeletePost([FromRoute]string id)
+        {
+            await _mediator.Send(new DeletePostCommand(id));
+            apiResponse.IsSuccess = true;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = null;
+            return Ok(apiResponse);
         }
     }
 }

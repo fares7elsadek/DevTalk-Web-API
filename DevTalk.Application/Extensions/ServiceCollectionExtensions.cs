@@ -1,7 +1,7 @@
 ﻿using DevTalk.Application.Posts.Dtos;
 using DevTalk.Application.Posts.Queries.GetAllPosts;
 using DevTalk.Application.Services;
-using DevTalk.Application.User;
+using DevTalk.Application.ApplicationUser;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http.Features;
@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions
         {
             options.MultipartBodyLengthLimit = 5 * 1024 * 1024;
         });
-        
+        services.AddScoped<IAuthService, AuthService>();
     }
 
     public static void SeriLogConfigurations(this IHostBuilder host)

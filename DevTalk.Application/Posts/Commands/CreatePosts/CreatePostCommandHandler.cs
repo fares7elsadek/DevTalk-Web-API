@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DevTalk.Application.Posts.Dtos;
 using DevTalk.Application.Services;
-using DevTalk.Application.User;
+using DevTalk.Application.ApplicationUser;
 using DevTalk.Domain.Constants;
 using DevTalk.Domain.Entites;
 using DevTalk.Domain.Exceptions;

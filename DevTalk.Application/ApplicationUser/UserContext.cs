@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace DevTalk.Application.User;
+namespace DevTalk.Application.ApplicationUser;
 
 public class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContext
 {

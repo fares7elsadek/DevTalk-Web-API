@@ -1,4 +1,4 @@
-﻿namespace DevTalk.Application.User;
+﻿namespace DevTalk.Application.ApplicationUser;
 
 public class CurrentUser(string userId , string Email ,IEnumerable<string> Roles)
 {

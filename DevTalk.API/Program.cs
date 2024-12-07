@@ -1,7 +1,6 @@
 using DevTalk.API.Extensions;
 using DevTalk.API.Middlewares;
 using DevTalk.Application.Extensions;
-using DevTalk.Domain.Entites;
 using DevTalk.Infrastructure.Extensions;
 using DevTalk.Infrastructure.Seeder;
 using Microsoft.Extensions.FileProviders;
@@ -17,16 +16,10 @@ public class Program
 
 
         builder.Services.AddInfrastructure(builder.Configuration);
-        builder.Services.AddPresentation();
-        builder.Host.SeriLogConfigurations();
+        builder.AddPresentation();
         builder.Services.AddApplication();
-        builder.Services.AddControllers()
-            .AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
-        
         builder.Services.AddOpenApi();
+        builder.Services.AddEndpointsApiExplorer();
 
         var app = builder.Build();
         DevTalkSeeder(app);
@@ -35,7 +28,8 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
-            app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "v1"));
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
         app.UseHttpsRedirection();
@@ -46,8 +40,7 @@ public class Program
             RequestPath = "/Resources"
         });
         app.UseCors();
-        app.MapGroup("api/identity")
-            .WithTags("Identity").MapIdentityApi<User>();
+        app.UseAuthentication();
         app.UseAuthorization();
         app.UseSerilogRequestLogging();
 
