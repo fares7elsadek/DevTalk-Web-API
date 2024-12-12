@@ -1,0 +1,17 @@
+﻿using DevTalk.Application.ApplicationUser.Dtos;
+using DevTalk.Application.Posts.Dtos;
+using DevTalk.Domain.Entites;
+
+namespace DevTalk.Application.Comments.Dtos;
+
+public class CommentDto
+{
+    public string CommentText { get; set; } = default!;
+    public DateTime CommentedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public ICollection<CommentVotes> Votes { get; set; }
+    public string PostId { get; set; } = default!;
+    public string UserId { get; set; } = default!;
+    public UserDto User { get; set; } = default!;
+
+}

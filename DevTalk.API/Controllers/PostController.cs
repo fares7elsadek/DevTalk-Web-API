@@ -74,6 +74,7 @@ namespace DevTalk.API.Controllers
         }
 
         [HttpPatch("update")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -83,12 +84,13 @@ namespace DevTalk.API.Controllers
             await _mediator.Send(command);
             apiResponse.IsSuccess = true;
             apiResponse.StatusCode = HttpStatusCode.OK;
-            apiResponse.Result = null;
+            apiResponse.Result = "Post updated successfully";
             return Ok(apiResponse);
         }
 
 
-        [HttpPatch("delete/{id}")]
+        [HttpDelete("delete/{id}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -98,7 +100,7 @@ namespace DevTalk.API.Controllers
             await _mediator.Send(new DeletePostCommand(id));
             apiResponse.IsSuccess = true;
             apiResponse.StatusCode = HttpStatusCode.OK;
-            apiResponse.Result = null;
+            apiResponse.Result = "Post deleted successfully";
             return Ok(apiResponse);
         }
     }

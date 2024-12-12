@@ -11,5 +11,8 @@ public class UserProfile:Profile
         CreateMap<User, RegisterUserCommand>()
         .ForMember(dest => dest.Password, opt => opt.Ignore())
         .ReverseMap();
+
+        CreateMap<User, UserDto>()
+        .ReverseMap();
     }
 }

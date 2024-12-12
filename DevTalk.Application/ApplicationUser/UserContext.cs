@@ -15,8 +15,8 @@ public class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContex
         if (user.Identity == null || !user.Identity.IsAuthenticated)
             throw new CustomeException("User is not Authenticated");
 
-        var userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
-        var userEmail = user.FindFirst(c => c.Type != ClaimTypes.Email)!.Value;
+        var userId = user.FindFirst(c => c.Type == "uid")!.Value;
+        var userEmail = user.FindFirst(c => c.Type == ClaimTypes.Email)!.Value;
         var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role)!.Select(c => c.Value);
         return new CurrentUser(userId, userEmail, roles);
     }

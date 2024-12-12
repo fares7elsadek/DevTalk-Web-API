@@ -18,25 +18,26 @@ public class Program
         builder.Services.AddInfrastructure(builder.Configuration);
         builder.AddPresentation();
         builder.Services.AddApplication();
-        builder.Services.AddOpenApi();
         builder.Services.AddEndpointsApiExplorer();
 
         var app = builder.Build();
         DevTalkSeeder(app);
 
         app.UseMiddleware<ErrorHandlingMiddleware>();
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        
+        app.UseSwagger();
+        app.UseSwaggerUI();
+        
 
         app.UseHttpsRedirection();
+        string uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "Uploads");
+        if (!Directory.Exists(uploadsPath))
+        {
+            Directory.CreateDirectory(uploadsPath);
+        }
         app.UseStaticFiles(new StaticFileOptions
         {
-            FileProvider = new PhysicalFileProvider(
-           Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+            FileProvider = new PhysicalFileProvider(uploadsPath),
             RequestPath = "/Resources"
         });
         app.UseCors();

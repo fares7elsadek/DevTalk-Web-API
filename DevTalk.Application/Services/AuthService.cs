@@ -45,7 +45,7 @@ public class AuthService : IAuthService
             issuer:jwt.Issure,
             audience:jwt.Audience,
             claims:claims,
-            expires:DateTime.Now.AddMinutes(jwt.DurationInDays),
+            expires:DateTime.Now.AddMinutes(jwt.DurationInMinutes),
             signingCredentials: SigningCredentials
             );
         return jwtSecurityToken;

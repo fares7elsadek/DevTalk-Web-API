@@ -20,9 +20,6 @@ public class PostProfile:Profile
             {
                 opt.MapFrom(src => src.Votes);
 
-            }).ForMember(d => d.Comments, opt =>
-            {
-                opt.MapFrom(src => src.Comments);
             }).ReverseMap();
 
     }

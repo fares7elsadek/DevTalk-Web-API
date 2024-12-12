@@ -1,4 +1,5 @@
-﻿using DevTalk.Application.PostMedias.Dtos;
+﻿using DevTalk.Application.Comments.Dtos;
+using DevTalk.Application.PostMedias.Dtos;
 using DevTalk.Domain.Entites;
 
 namespace DevTalk.Application.Posts.Dtos;
@@ -12,7 +13,6 @@ public class PostDto
     public DateTime? UpdatedAt { get; set; }
     public ICollection<PostMediasDto>? PostMedias { get; set; }
     public ICollection<PostVotes>? Votes { get; set; }
-    public ICollection<Comment>? Comments { get; set; }
     public string UserId { get; set; } = default!;
     public string Username { get; set; } = default!;
 
