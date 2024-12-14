@@ -4,6 +4,7 @@ using DevTalk.Application.Posts.Commands.UpdatePosts;
 using DevTalk.Application.Posts.Dtos;
 using DevTalk.Application.Posts.Queries.GetAllPosts;
 using DevTalk.Application.Posts.Queries.GetPostById;
+using DevTalk.Application.Posts.Queries.GetTrendingPosts;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using MediatR;
@@ -101,6 +102,20 @@ namespace DevTalk.API.Controllers
             apiResponse.IsSuccess = true;
             apiResponse.StatusCode = HttpStatusCode.OK;
             apiResponse.Result = "Post deleted successfully";
+            return Ok(apiResponse);
+        }
+
+        [HttpGet("trending")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse>> GetTrendingPosts(
+            [FromQuery] int page = 1, [FromQuery] int size = 5)
+        {
+            var posts = await _mediator.Send(new GetTrendingPostsQuery(page, size));
+            apiResponse.IsSuccess = true;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = posts;
             return Ok(apiResponse);
         }
     }

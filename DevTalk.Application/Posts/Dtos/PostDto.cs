@@ -14,6 +14,9 @@ public class PostDto
     public DateTime? UpdatedAt { get; set; }
     public ICollection<PostMediasDto>? PostMedias { get; set; }
     public ICollection<PostVotesDto>? Votes { get; set; }
+    public int UpVotes { get; set; }
+    public int DownVotes { get; set; }
+    public int Comments { get; set; }
     public string UserId { get; set; } = default!;
     public string Username { get; set; } = default!;
 
