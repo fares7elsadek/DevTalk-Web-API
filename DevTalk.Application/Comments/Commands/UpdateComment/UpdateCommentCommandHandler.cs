@@ -30,6 +30,7 @@ public class UpdateCommentCommandHandler(IUnitOfWork unitOfWork,
             throw new CustomeException("Not authorized");
 
         comment.CommentText = request.CommentText;
+        comment.UpdatedAt = DateTime.UtcNow;
         await unitOfWork.SaveAsync();
     }
 }

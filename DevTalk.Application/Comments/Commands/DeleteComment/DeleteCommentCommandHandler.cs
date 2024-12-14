@@ -29,8 +29,12 @@ public class DeleteCommentCommandHandler(IUnitOfWork unitOfWork,
 
         if (!user.IsInRole(UserRoles.Admin))
         {
-            if (user.userId != comment.UserId || user.userId != post.UserId)
-                throw new CustomeException("User not authorized");
+            if (user.userId != comment.UserId)
+            {
+                if(user.userId != post.UserId)
+                    throw new CustomeException("User not authorized");
+            }
+                
         }
         unitOfWork.Comment.Remove(comment);
         await unitOfWork.SaveAsync();

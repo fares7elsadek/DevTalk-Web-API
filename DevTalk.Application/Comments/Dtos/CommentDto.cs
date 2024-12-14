@@ -6,6 +6,7 @@ namespace DevTalk.Application.Comments.Dtos;
 
 public class CommentDto
 {
+    public string CommentId { get; set; } = default!;
     public string CommentText { get; set; } = default!;
     public DateTime CommentedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
