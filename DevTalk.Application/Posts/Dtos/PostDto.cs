@@ -2,6 +2,7 @@
 using DevTalk.Application.PostMedias.Dtos;
 using DevTalk.Application.PostVote.Dtos;
 using DevTalk.Domain.Entites;
+using Humanizer;
 
 namespace DevTalk.Application.Posts.Dtos;
 
@@ -12,6 +13,8 @@ public class PostDto
     public string Body { get; set; } = default!;
     public DateTime PostedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public string PostedAtAgo => PostedAt.Humanize();
+    public string? UpdatedAtAgo => UpdatedAt?.Humanize();
     public ICollection<PostMediasDto>? PostMedias { get; set; }
     public ICollection<PostVotesDto>? Votes { get; set; }
     public int UpVotes { get; set; }

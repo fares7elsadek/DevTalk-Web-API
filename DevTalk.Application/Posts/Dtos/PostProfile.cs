@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using DevTalk.Domain.Constants;
 using DevTalk.Domain.Entites;
+using Humanizer;
+
 
 namespace DevTalk.Application.Posts.Dtos;
 
