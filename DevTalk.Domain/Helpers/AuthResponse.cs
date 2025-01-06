@@ -14,7 +14,6 @@ public class AuthResponse
     public string Email     { get; set; } = default!;
     public List<string> Roles { get; set; }
     public string Token { get; set; } = default!;
-   // public DateTime ExpiresOne { get; set; }
 
     [JsonIgnore]
     public string RefreshToken { get; set; }

@@ -12,7 +12,7 @@ public class FileService(IWebHostEnvironment environment) : IFileService
         {
             throw new ArgumentNullException(nameof(FileName));
         }
-        var contentPath = environment.ContentRootPath;
+        var contentPath = environment.WebRootPath;
         var path = Path.Combine(contentPath, $"Uploads", FileName);
 
         if (!File.Exists(path))
@@ -26,7 +26,7 @@ public class FileService(IWebHostEnvironment environment) : IFileService
     {
         if(file == null) throw new ArgumentNullException(nameof(file));
 
-        var ContentPath = environment.ContentRootPath;
+        var ContentPath = environment.WebRootPath;
         var path = Path.Combine(ContentPath, "Uploads");
         
         if(!Directory.Exists(path)) Directory.CreateDirectory(path);

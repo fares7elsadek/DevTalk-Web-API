@@ -1,6 +1,8 @@
 using DevTalk.API.Extensions;
 using DevTalk.API.Middlewares;
 using DevTalk.Application.Extensions;
+using DevTalk.Domain.Entites;
+using DevTalk.Domain.Helpers;
 using DevTalk.Infrastructure.Extensions;
 using DevTalk.Infrastructure.Seeder;
 using Microsoft.Extensions.FileProviders;
@@ -19,32 +21,27 @@ public class Program
         builder.AddPresentation();
         builder.Services.AddApplication();
         builder.Services.AddEndpointsApiExplorer();
-
+        
         var app = builder.Build();
         DevTalkSeeder(app);
 
         app.UseMiddleware<ErrorHandlingMiddleware>();
+
+
+        if (true)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
         
-        app.UseSwagger();
-        app.UseSwaggerUI();
         
 
         app.UseHttpsRedirection();
-        string uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "Uploads");
-        if (!Directory.Exists(uploadsPath))
-        {
-            Directory.CreateDirectory(uploadsPath);
-        }
-        app.UseStaticFiles(new StaticFileOptions
-        {
-            FileProvider = new PhysicalFileProvider(uploadsPath),
-            RequestPath = "/Resources"
-        });
+        app.UseStaticFiles();
         app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseSerilogRequestLogging();
-
         app.MapControllers();
 
         app.Run();

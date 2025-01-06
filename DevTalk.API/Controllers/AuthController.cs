@@ -1,14 +1,15 @@
-﻿using DevTalk.Application.Posts.Commands.CreatePosts;
+﻿using DevTalk.Application.ApplicationUser.Commands.ConfirmEmail;
+using DevTalk.Application.ApplicationUser.Commands.CreateRefreshToken;
+using DevTalk.Application.ApplicationUser.Commands.LoginUser;
 using DevTalk.Application.ApplicationUser.Commands.RegisterUser;
+using DevTalk.Application.ApplicationUser.Commands.ResendConfirmationLink;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using DevTalk.Application.ApplicationUser.Commands.LoginUser;
 using Swashbuckle.AspNetCore.Annotations;
-using DevTalk.Application.ApplicationUser.Commands.CreateRefreshToken;
+using System.Net;
 
 namespace DevTalk.API.Controllers
 {
@@ -30,14 +31,53 @@ namespace DevTalk.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<AuthResponse>> RegisterUser([FromBody]RegisterUserCommand command)
+        public async Task<ActionResult> RegisterUser([FromBody] RegisterUserCommand command)
         {
             var authResponse = await _mediator.Send(command);
-            if (!authResponse.IsAuthenticated)
-                return BadRequest(authResponse);
-            if (!string.IsNullOrEmpty(authResponse.RefreshToken))
-                SetRefreshTokenInCookie(authResponse.RefreshToken, authResponse.RefreshTokenExpiration);
-            return Ok(authResponse);
+            
+            var response = new
+            {
+                message = authResponse.Message,
+                email = authResponse.Email,
+            };
+
+            apiResponse.IsSuccess = true;
+            apiResponse.Errors = null;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = response;
+            return Ok(apiResponse);
+        }
+
+        [HttpGet("confirmEmail", Name = "ConfirmEmail")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse>> ConfirmEmail([FromQuery] string UserId, [FromQuery] string Code)
+        {
+            var response = await _mediator.Send(new ConfirmEmailCommand(UserId, Code));
+            apiResponse.IsSuccess = true;
+            apiResponse.Errors = null;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = response;
+            return Ok(apiResponse);
+        }
+
+        [HttpPost("resendConfirmationEmail")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse>> ResendConfirmationEmail([FromBody]ResendConfirmationLinkCommand command)
+        {
+            var response = await _mediator.Send(command);
+            apiResponse.IsSuccess = true;
+            apiResponse.Errors = null;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = response;
+            return Ok(apiResponse);
         }
 
         [HttpPost("login")]
@@ -46,14 +86,19 @@ namespace DevTalk.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<AuthResponse>> LoginUser([FromBody] LoginUserCommand command)
+        public async Task<ActionResult> LoginUser([FromBody] LoginUserCommand command)
         {
             var authResponse = await _mediator.Send(command);
             if (!authResponse.IsAuthenticated)
                 return BadRequest(authResponse);
             if (!string.IsNullOrEmpty(authResponse.RefreshToken))
                 SetRefreshTokenInCookie(authResponse.RefreshToken, authResponse.RefreshTokenExpiration);
-            return Ok(authResponse);
+
+            apiResponse.IsSuccess = true;
+            apiResponse.Errors = null;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = authResponse;
+            return Ok(apiResponse);
         }
 
         [HttpGet("refreshToken")]
@@ -72,7 +117,7 @@ namespace DevTalk.API.Controllers
         }
 
         [SwaggerIgnore]
-        public void SetRefreshTokenInCookie(string refreshToken,DateTime expires)
+        public void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
         {
             var cookieOptions = new CookieOptions
             {

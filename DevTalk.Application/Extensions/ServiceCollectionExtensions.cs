@@ -9,6 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using DevTalk.Application.Services.EmailService;
+using DevTalk.Domain.Entites;
+using Microsoft.AspNetCore.Identity;
+using DevTalk.Domain.Helpers;
+using Humanizer.Configuration;
 
 namespace DevTalk.Application.Extensions;
 
@@ -38,6 +45,8 @@ public static class ServiceCollectionExtensions
             options.MultipartBodyLengthLimit = 5 * 1024 * 1024;
         });
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IEmailSender<User>,EmailSender>();
+        
     }
 
     public static void SeriLogConfigurations(this IHostBuilder host)

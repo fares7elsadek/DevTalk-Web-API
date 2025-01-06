@@ -1,5 +1,6 @@
 ﻿using DevTalk.API.Middlewares;
 using DevTalk.Application.Extensions;
+using DevTalk.Domain.Helpers;
 using Microsoft.OpenApi.Models;
 
 namespace DevTalk.API.Extensions;
@@ -11,7 +12,7 @@ public static class  ServiceCollectionExtensions
         builder.Services.AddScoped<ErrorHandlingMiddleware>();
         builder.Host.SeriLogConfigurations();
         builder.Services.AddControllers();
-            
+        builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("email"));
 
         builder.Services.AddSwaggerGen(c =>
         {

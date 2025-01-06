@@ -1,51 +1,90 @@
 ﻿using AutoMapper;
-using DevTalk.Application.Services;
 using DevTalk.Domain.Constants;
 using DevTalk.Domain.Entites;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.WebUtilities;
+using Serilog;
+using System.Text;
 
 namespace DevTalk.Application.ApplicationUser.Commands.RegisterUser;
-
 public class RegisterUserCommandHandler(UserManager<User> userManager,
-    IMapper mapper,IAuthService authService) : IRequestHandler<RegisterUserCommand, AuthResponse>
+    IMapper mapper,LinkGenerator linkGenerator
+    , IHttpContextAccessor httpContextAccessor,IEmailSender<User> emailSender) : IRequestHandler<RegisterUserCommand, AuthResponse>
 {
     public async Task<AuthResponse> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         if (await userManager.FindByEmailAsync(request.Email) is not null)
-            return new AuthResponse { Message = "User email already exsit" };
+            throw new CustomeException("User email already exsit");
+        
 
         if (await userManager.FindByNameAsync(request.UserName) is not null)
-            return new AuthResponse { Message = "Username already exsit" };
-
+            throw new CustomeException("Username already exsit");
+        
         var user = mapper.Map<User>(request);
         var result = await userManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded)
         {
             List<string> errors = new List<string>();
-            foreach(var error in result.Errors)
+            foreach (var error in result.Errors)
             {
                 errors.Add(error.Description);
             }
-            throw new CustomeException(string.Join(',',errors));
+            throw new CustomeException(string.Join(',', errors));
         }
+
+        if (httpContextAccessor.HttpContext == null)
+            throw new CustomeException("Something wrong has happened");
+
         await userManager.AddToRoleAsync(user, UserRoles.User);
-        var JwtSecurityToken = await authService.CreatJwtToken(user);
-        if (JwtSecurityToken == null)
-            throw new CustomeException("Somthing wrong has happened");
-        return new AuthResponse
+
+        try
         {
-            Message = "User registered successfully",
-            Email = user.Email,
-            //ExpiresOne = JwtSecurityToken.ValidTo,
+            await SendConfirmationEmailAsync(user, httpContextAccessor.HttpContext);
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"Failed to send confirmation email for user {user.Email}: {ex.Message}");
+            throw new CustomeException($"Failed to send confirmation email for user {user.Email}: {ex.Message}");
+        }
+
+
+
+        var authResponse = new AuthResponse
+        {
+            Email = request.Email,
+            Username = request.UserName,
             IsAuthenticated = true,
-            Roles = new List<string> { UserRoles.User },
-            Token = new JwtSecurityTokenHandler().WriteToken(JwtSecurityToken),
-            Username = user.UserName
+            Message = "User registered successfully. Please check your email to confirm your account."
         };
+
+        return authResponse;
+    }
+
+    private async Task SendConfirmationEmailAsync(User user,HttpContext httpContext)
+    {
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        user.LastEmailConfirmationToken = code;
+        await userManager.UpdateAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+        var userId = await userManager.GetUserIdAsync(user);
+        var routeValues = new RouteValueDictionary()
+        {
+            ["userId"] = userId,
+            ["code"] = code
+        };
+        var confirmEmailEndpointName = "ConfirmEmail";
+        var confirmEmailUrl = linkGenerator.GetUriByName(httpContext, confirmEmailEndpointName, routeValues)
+            ?? throw new NotSupportedException($"Could not find endpoint named '{confirmEmailEndpointName}'.");
+
+        if (user.Email == null)
+            throw new CustomeException("User email is not defined");
+
+        await emailSender.SendConfirmationLinkAsync(user,user.Email,confirmEmailUrl);
     }
 }

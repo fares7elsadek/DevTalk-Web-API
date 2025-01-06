@@ -1,6 +1,4 @@
-﻿
-
-using DevTalk.Domain.Helpers;
+﻿using DevTalk.Domain.Helpers;
 using MediatR;
 
 namespace DevTalk.Application.ApplicationUser.Commands.LoginUser;

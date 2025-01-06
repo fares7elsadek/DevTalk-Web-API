@@ -24,8 +24,20 @@ public static class ServiceCollectionExtensions
         {
             options.UseSqlServer(connectionString);
         });
-        services.AddIdentity<User, IdentityRole>()
-            .AddEntityFrameworkStores<AppDbContext>();
+        services.AddIdentity<User, IdentityRole>(options =>
+        {
+            options.SignIn.RequireConfirmedEmail = true;
+            options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+        })
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddDefaultTokenProviders();
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(3); 
+        });
         services.AddScoped<IDevTalkSeeder,DevTalkSeeder>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.Configure<JwtOptions>(configuration.GetSection("JWT"));
@@ -45,7 +57,7 @@ public static class ServiceCollectionExtensions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidIssuer = configuration["JWT:Issure"],
-                    ValidAudience= configuration["JWT:Audience"],
+                    ValidAudience = configuration["JWT:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
                 };
             });
