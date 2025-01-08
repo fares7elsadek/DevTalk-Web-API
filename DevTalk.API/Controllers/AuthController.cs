@@ -1,12 +1,13 @@
 ﻿using DevTalk.Application.ApplicationUser.Commands.ConfirmEmail;
 using DevTalk.Application.ApplicationUser.Commands.CreateRefreshToken;
+using DevTalk.Application.ApplicationUser.Commands.ForgotPassword;
 using DevTalk.Application.ApplicationUser.Commands.LoginUser;
 using DevTalk.Application.ApplicationUser.Commands.RegisterUser;
 using DevTalk.Application.ApplicationUser.Commands.ResendConfirmationLink;
+using DevTalk.Application.ApplicationUser.Commands.ResetPassword;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
@@ -99,6 +100,54 @@ namespace DevTalk.API.Controllers
             apiResponse.StatusCode = HttpStatusCode.OK;
             apiResponse.Result = authResponse;
             return Ok(apiResponse);
+        }
+
+        [HttpPost("forgetPassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> ForgetPassword([FromBody] ForgotPasswordCommand command)
+        {
+            var response = await _mediator.Send(command);
+
+            apiResponse.IsSuccess = true;
+            apiResponse.Errors = null;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = response;
+            return Ok(apiResponse);
+        }
+
+        [HttpPost("{UserId}/{Token}/reset-password", Name = "reset-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordCommand command, [FromRoute] string UserId,
+            [FromRoute] string Token)
+        {
+            var newCommand = new ResetPasswordCommand
+            {
+                UserId = UserId,
+                Token = Token,
+                NewPassword = command.NewPassword
+            };
+            var response = await _mediator.Send(newCommand);
+            if (response == "Your password has been successfully reset.")
+            {
+                apiResponse.IsSuccess = true;
+                apiResponse.Errors = null;
+                apiResponse.StatusCode = HttpStatusCode.OK;
+                apiResponse.Result = response;
+                return Ok(apiResponse);
+            }
+            apiResponse.IsSuccess = false;
+            apiResponse.Errors = null;
+            apiResponse.StatusCode = HttpStatusCode.BadRequest;
+            apiResponse.Result = response;
+            return BadRequest(apiResponse);
         }
 
         [HttpGet("refreshToken")]

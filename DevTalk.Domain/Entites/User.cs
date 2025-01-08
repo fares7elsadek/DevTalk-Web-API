@@ -16,6 +16,7 @@ public class User:IdentityUser
     public string? Avatar { get; set; }
     public DateOnly? BirthOfDate { get; set; }
     public string? LastEmailConfirmationToken { get; set; }
+    public DateTime? ForgetPasswordResetLinkRequestedAt { get; set; }
     public ICollection<Post> Posts { get; set; }
     public ICollection<Comment> Comments { get; set; }
     public ICollection<PostVotes> PostVotes { get; set; }
