@@ -22,7 +22,10 @@ public static class ServiceCollectionExtensions
         var connectionString = configuration.GetConnectionString("cs");
         services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseSqlServer(connectionString);
+            options.UseSqlServer(connectionString, builder =>
+            {
+                builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+            });
         });
         services.AddIdentity<User, IdentityRole>(options =>
         {
