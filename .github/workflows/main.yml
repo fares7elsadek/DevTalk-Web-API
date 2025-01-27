@@ -1,0 +1,27 @@
+name: DevTalk
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches:
+    - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-os
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4.2.0
+        with:
+          dotnet-version: 9.0.x
+      - name: restore dependenceis
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: unit tests
+        run: dotnet test
+  
