@@ -27,7 +27,10 @@ jobs:
         with:
           name: api-artifact
           path: ${{env.DOTNET_ROOT}}/api
-  deploy-dev:
+  deploy-prod:
+    environment: 
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     runs-on: ubuntu-latest
     needs: build
     steps:
