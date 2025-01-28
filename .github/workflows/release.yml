@@ -30,7 +30,7 @@ jobs:
   deploy-prod:
     environment: 
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: 'https://dev-talk.azurewebsites.net'
     runs-on: ubuntu-latest
     needs: build
     steps:
