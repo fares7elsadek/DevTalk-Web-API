@@ -1,4 +1,4 @@
-name: DevTalk
+name: DevTalk-CI
 
 on:
   pull_request:
