@@ -4,5 +4,4 @@ namespace DevTalk.Domain.Repositories;
 
 public interface ICommentVotesRepository:IRepositories<CommentVotes>
 {
-    void Update(CommentVotes entity);
 }
