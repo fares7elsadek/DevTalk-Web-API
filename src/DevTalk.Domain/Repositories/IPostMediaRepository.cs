@@ -5,5 +5,4 @@ namespace DevTalk.Domain.Repositories;
 
 public interface IPostMediaRepository:IRepositories<PostMedia>
 {
-    void Update(PostMedia postMedia);
 }

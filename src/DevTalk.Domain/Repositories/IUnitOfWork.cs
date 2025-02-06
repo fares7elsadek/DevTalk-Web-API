@@ -1,4 +1,6 @@
-﻿namespace DevTalk.Domain.Repositories;
+﻿using DevTalk.Domain.Entites;
+
+namespace DevTalk.Domain.Repositories;
 
 public interface IUnitOfWork
 {

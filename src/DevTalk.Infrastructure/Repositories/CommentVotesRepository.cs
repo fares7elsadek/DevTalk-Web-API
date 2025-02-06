@@ -6,8 +6,5 @@ namespace DevTalk.Infrastructure.Repositories;
 
 public class CommentVotesRepository(AppDbContext _db) : Repository<CommentVotes>(_db), ICommentVotesRepository
 {
-    public void Update(CommentVotes entity)
-    {
-        _db.Update(entity);
-    }
+    
 }
