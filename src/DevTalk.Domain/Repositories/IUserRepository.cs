@@ -4,5 +4,4 @@ namespace DevTalk.Domain.Repositories;
 
 public interface IUserRepository:IRepositories<User>
 {
-    void Update(User user);
 }
