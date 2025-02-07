@@ -9,7 +9,10 @@ public class CachingService(IDistributedCache cache) : ICachingService
     {
         var value = await cache.GetStringAsync(key);
         if (!string.IsNullOrEmpty(value))
-            return JsonConvert.DeserializeObject<T>(value);
+            return JsonConvert.DeserializeObject<T>(value,new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            });
         return default;
     }
 
@@ -32,7 +35,10 @@ public class CachingService(IDistributedCache cache) : ICachingService
             {
                 AbsoluteExpiration = expirationTime
             };
-            var serializedValue = JsonConvert.SerializeObject(value);
+            var serializedValue = JsonConvert.SerializeObject(value, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            });
             await cache.SetStringAsync(key, serializedValue, options);
 
             return true;
