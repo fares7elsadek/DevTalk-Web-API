@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Identity;
 using DevTalk.Domain.Helpers;
 using Humanizer.Configuration;
 using DevTalk.Application.Services.Caching;
+using MediatR;
+using DevTalk.Application.Caching;
+using DevTalk.Application.Caching.Behavior;
 
 namespace DevTalk.Application.Extensions;
 
@@ -48,7 +51,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IEmailSender<User>,EmailSender>();
         services.AddScoped<ICachingService,CachingService>();
-        
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
+
     }
 
     public static void SeriLogConfigurations(this IHostBuilder host)
