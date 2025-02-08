@@ -4,7 +4,7 @@ using DevTalk.Infrastructure.Data;
 
 namespace DevTalk.Infrastructure.Repositories;
 
-public class CommendRepository(AppDbContext _db) : Repository<Comment>(_db), ICommentRepository
+public class CommentRepository(AppDbContext _db) : Repository<Comment>(_db), ICommentRepository
 {
     
 }

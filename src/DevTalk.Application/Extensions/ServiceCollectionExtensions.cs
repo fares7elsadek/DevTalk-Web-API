@@ -20,6 +20,7 @@ using DevTalk.Application.Services.Caching;
 using MediatR;
 using DevTalk.Application.Caching;
 using DevTalk.Application.Caching.Behavior;
+using StackExchange.Redis;
 
 namespace DevTalk.Application.Extensions;
 
@@ -52,7 +53,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmailSender<User>,EmailSender>();
         services.AddScoped<ICachingService,CachingService>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
-
     }
 
     public static void SeriLogConfigurations(this IHostBuilder host)

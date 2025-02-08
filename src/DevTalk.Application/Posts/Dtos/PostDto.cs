@@ -22,5 +22,6 @@ public class PostDto
     public int Comments { get; set; }
     public string UserId { get; set; } = default!;
     public string Username { get; set; } = default!;
+    public List<string> Categories { get; set; } = new();
 
 }
