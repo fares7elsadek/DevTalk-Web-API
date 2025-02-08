@@ -54,7 +54,8 @@ namespace DevTalk.Application.Posts.Commands.CreatePosts.Tests
             {
                 Title = "Test Title",
                 Body = "Test Body",
-                Files = null
+                Files = null,
+                Categories = null
             };
             var user = new CurrentUser("user_id", "user@email.com", new[] { UserRoles.User });
             var post = new Post { Title = command.Title, Body = command.Body, UserId = user.userId };
