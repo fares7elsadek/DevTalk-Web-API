@@ -8,7 +8,7 @@ using MediatR;
 namespace DevTalk.Application.Posts.Commands.DeletePost;
 
 public class DeletePostCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext,IFileService fileService) : IRequestHandler<DeletePostCommand>
+    IUserContext userContext,IFileService fileService,IPublisher publisher) : IRequestHandler<DeletePostCommand>
 {
     public async Task Handle(DeletePostCommand request, CancellationToken cancellationToken)
     {
@@ -38,5 +38,6 @@ public class DeletePostCommandHandler(IUnitOfWork unitOfWork,
         unitOfWork.PostVotes.RemoveRange(post.Votes);
         unitOfWork.Post.Remove(post);
         await unitOfWork.SaveAsync();
+        await publisher.Publish(new DeletePostEvent(request.PostId));
     }
 }

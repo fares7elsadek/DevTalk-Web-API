@@ -6,7 +6,7 @@ using MediatR;
 namespace DevTalk.Application.Comments.Commands.UpdateComment;
 
 public class UpdateCommentCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<UpdateCommentCommand>
+    IUserContext userContext,IPublisher publisher) : IRequestHandler<UpdateCommentCommand>
 {
     public async Task Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
     {
@@ -32,5 +32,6 @@ public class UpdateCommentCommandHandler(IUnitOfWork unitOfWork,
         comment.CommentText = request.CommentText;
         comment.UpdatedAt = DateTime.UtcNow;
         await unitOfWork.SaveAsync();
+        await publisher.Publish(new UpdateCommentEvent(request.CommentId, request.PostId));
     }
 }
