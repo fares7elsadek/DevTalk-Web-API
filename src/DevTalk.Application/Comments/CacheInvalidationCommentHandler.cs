@@ -4,7 +4,7 @@ using DevTalk.Application.Comments.Commands.UpdateComment;
 using DevTalk.Application.Services.Caching;
 using MediatR;
 
-namespace DevTalk.Application.Comments.Commands;
+namespace DevTalk.Application.Comments;
 
 public class CacheInvalidationCommentHandler(ICachingService cache) :
     INotificationHandler<CreateCommentEvent>,
