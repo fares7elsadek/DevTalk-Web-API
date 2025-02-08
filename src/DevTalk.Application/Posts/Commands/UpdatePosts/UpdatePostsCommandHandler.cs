@@ -7,7 +7,7 @@ using MediatR;
 namespace DevTalk.Application.Posts.Commands.UpdatePosts;
 
 public class UpdatePostsCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<UpdatePostsCommand>
+    IUserContext userContext,IPublisher publisher) : IRequestHandler<UpdatePostsCommand>
 {
     public async Task Handle(UpdatePostsCommand request, CancellationToken cancellationToken)
     {
@@ -36,6 +36,12 @@ public class UpdatePostsCommandHandler(IUnitOfWork unitOfWork,
         if(!string.IsNullOrWhiteSpace(request.Body))
             post.Body = request.Body;
         unitOfWork.Post.Update(post);
+        await publisher.Publish(new UpdatePostEvent
+        {
+            Title = request.Title,
+            Body = request.Body,
+            PostId = id,
+        });
         await unitOfWork.SaveAsync();
     }
 }

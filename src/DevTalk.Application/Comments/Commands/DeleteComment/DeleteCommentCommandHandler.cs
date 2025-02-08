@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 namespace DevTalk.Application.Comments.Commands.DeleteComment;
 
 public class DeleteCommentCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<DeleteCommentCommand>
+    IUserContext userContext,IPublisher publisher) : IRequestHandler<DeleteCommentCommand>
 {
     public async Task Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
     {
@@ -38,5 +38,6 @@ public class DeleteCommentCommandHandler(IUnitOfWork unitOfWork,
         }
         unitOfWork.Comment.Remove(comment);
         await unitOfWork.SaveAsync();
+        await publisher.Publish(new DeleteCommentEvent(request.CommentId, request.PostId));
     }
 }
