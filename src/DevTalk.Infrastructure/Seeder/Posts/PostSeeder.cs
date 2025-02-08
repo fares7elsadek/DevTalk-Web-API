@@ -1,7 +1,6 @@
 ﻿using DevTalk.Domain.Entites;
 using DevTalk.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
-using System;
 
 namespace DevTalk.Infrastructure.Seeder.Posts;
 
@@ -43,6 +42,13 @@ public class PostSeeder : IPostSeeder
                 _db.Posts.AddRange(posts);
                 await _db.SaveChangesAsync();
             }
+
+            if (!_db.Category.Any())
+            {
+                var categories = GetCategories;
+                _db.Category.AddRange(categories);
+                await _db.SaveChangesAsync();
+            }
         }
     }
 
@@ -63,4 +69,46 @@ public class PostSeeder : IPostSeeder
             new Post() {UserId=_guid , PostId = Guid.NewGuid().ToString(), Title = "First Post", Body = "This is the body of the first post.", PostedAt = DateTime.Now },
         };
     }
+
+    public IEnumerable<Categories> GetCategories =>
+        new List<Categories>()
+        {
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "JavaScript" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "TypeScript" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "React" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Angular" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Vue" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Node.js" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Python" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Django" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Flask" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Machine Learning" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Artificial Intelligence" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Data Science" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "DevOps" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Kubernetes" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Docker" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Cloud Computing" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "AWS" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Azure" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Google Cloud" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Cybersecurity" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Web Development" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Mobile Development" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "iOS" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Android" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "C#" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = ".NET" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Java" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "PHP" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Rust" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Go" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Blockchain" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Cryptocurrency" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "UI/UX Design" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Software Architecture" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Agile" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Testing" },
+            new Categories { CategoryId = Guid.NewGuid().ToString(), CategoryName = "Performance" }
+        };
 }

@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options):IdentityDbCont
     public DbSet<PostVotes> PostVotes { get; set; }
     public DbSet<CommentVotes> CommentVotes { get; set; }
     public DbSet<PostMedia> PostMedia { get; set; }
+    public DbSet<Categories> Category { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);

@@ -10,5 +10,6 @@ public interface IUnitOfWork
     IPostMediaRepository PostMedia { get; }
     IPostVotesRepository PostVotes { get; }
     IUserRepository User { get; }
+    ICategoryRepository Category { get; }
     Task SaveAsync();
 }

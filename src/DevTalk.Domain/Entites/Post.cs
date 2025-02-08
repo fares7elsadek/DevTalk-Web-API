@@ -1,6 +1,4 @@
-﻿
-
-namespace DevTalk.Domain.Entites;
+﻿namespace DevTalk.Domain.Entites;
 
 public class Post
 {
@@ -9,6 +7,8 @@ public class Post
         PostMedias = new HashSet<PostMedia>();
         Votes = new HashSet<PostVotes>();
         Comments = new HashSet<Comment>();
+        Categories = new HashSet<Categories>();
+        PostCategories = new HashSet<PostCategory>();
     }
     public string PostId { get; set; } = default!;
     public string Title { get; set; } = default!;
@@ -20,4 +20,6 @@ public class Post
     public ICollection<Comment> Comments { get; set; }
     public string UserId { get; set; } = default!;
     public User User { get; set; } = default!;
+    public ICollection<Categories> Categories { get; set; }
+    public ICollection<PostCategory> PostCategories { get; set; }
 }

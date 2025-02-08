@@ -18,11 +18,27 @@ public class CreatePostCommandHandler(IMapper mapper,
     {
         var user = userContext.GetCurrentUser();
         if (user == null) throw new CustomeException("The user is not authroized");
-        var post = new Post
+
+        Post post;
+        if(request.Categories is not null)
+        {
+            var categories = await unitOfWork.Category.GetAllWithConditionAsync(x => request.Categories.Contains(x.CategoryId));
+            if (request.Categories.Count != categories.ToList().Count)
+                throw new CustomeException("One or more selected categories are invalid.");
+            post = new Post
+            {
+                Title = request.Title,
+                Body = request.Body,
+                UserId = user.userId,
+                Categories = categories.ToList(),
+            };
+        }
+            
+        post = new Post
         {
             Title = request.Title,
             Body = request.Body,
-            UserId = user.userId
+            UserId = user.userId,
         };
 
         if (request.Files == null || request.Files.Count == 0)
