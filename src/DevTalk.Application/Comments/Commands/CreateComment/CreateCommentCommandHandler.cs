@@ -8,7 +8,7 @@ using MediatR;
 namespace DevTalk.Application.Comments.Commands.CreateComment;
 
 public class CreateCommentCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<CreateCommentCommand>
+    IUserContext userContext,IPublisher publisher) : IRequestHandler<CreateCommentCommand>
 {
     public async Task Handle(CreateCommentCommand request, CancellationToken cancellationToken)
     {
@@ -30,5 +30,9 @@ public class CreateCommentCommandHandler(IUnitOfWork unitOfWork,
         };
         await unitOfWork.Comment.AddAsync(NewComment);
         await unitOfWork.SaveAsync();
+        await publisher.Publish(new CreateCommentEvent(NewComment.PostId)
+        {
+            CommentText = request.CommentText,
+        });
     }
 }
