@@ -8,7 +8,6 @@ namespace DevTalk.Infrastructure.Repositories;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _db;
-    private readonly IDistributedCache _cache;
 
     public IPostRepository Post { get; private set; }
 
@@ -21,19 +20,18 @@ public class UnitOfWork : IUnitOfWork
     public IPostVotesRepository PostVotes { get; private set; }
 
     public IUserRepository User { get; private set; }
+    public ICategoryRepository Category { get; private set; }
 
     public UnitOfWork(AppDbContext db,IDistributedCache cache)
     {
         _db = db;
-        _cache = cache;
-        //Post = new CachedRepository<Post>(new PostRepository(_db),
-        //    _cache,"Post",_db);
         Post = new PostRepository(_db);
-        Comment = new CommendRepository(_db);
+        Comment = new CommentRepository(_db);
         CommentVotes = new CommentVotesRepository(_db);
         PostMedia = new PostMediaRepository(_db);
         User = new UserRepository(_db);
         PostVotes = new PostVotesRepository(_db);
+        Category = new CategoryRepository(_db);
     }
     public async Task SaveAsync()
     {

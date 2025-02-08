@@ -37,6 +37,9 @@ public class PostProfile:Profile
             {
                 opt.MapFrom(src => src.Comments.Count());
 
-            }).ReverseMap();
+            })
+            .ForMember(dest => dest.Categories
+            , opt => opt.MapFrom(src => src.Categories
+            .Select(c => c.CategoryName))).ReverseMap();
     }
 }
