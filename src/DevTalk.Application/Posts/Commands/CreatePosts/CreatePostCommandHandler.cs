@@ -12,7 +12,7 @@ namespace DevTalk.Application.Posts.Commands.CreatePosts;
 
 public class CreatePostCommandHandler(IMapper mapper,
     IUnitOfWork unitOfWork,IFileService fileService,
-    IUserContext userContext) : IRequestHandler<CreatePostCommand, PostDto>
+    IUserContext userContext,IPublisher publisher) : IRequestHandler<CreatePostCommand, PostDto>
 {
     public async Task<PostDto> Handle(CreatePostCommand request, CancellationToken cancellationToken)
     {
@@ -30,6 +30,11 @@ public class CreatePostCommandHandler(IMapper mapper,
             await unitOfWork.Post.AddAsync(post);
             await unitOfWork.SaveAsync();
             var postDto = mapper.Map<PostDto>(post);
+            await publisher.Publish(new CreatePostsEvent
+            {
+                Title= request.Title,
+                Body= request.Body,
+            });
             return postDto;
         }
         else
@@ -68,6 +73,12 @@ public class CreatePostCommandHandler(IMapper mapper,
             await unitOfWork.Post.AddAsync(post);
             await unitOfWork.SaveAsync();
             var postDto = mapper.Map<PostDto>(post);
+            await publisher.Publish(new CreatePostsEvent
+            {
+                Title = request.Title,
+                Body = request.Body,
+                Files = request.Files,
+            });
             return postDto;
         }
     }
