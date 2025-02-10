@@ -7,16 +7,10 @@ using MediatR;
 namespace DevTalk.Application.Category.Commands.DeleteCategory;
 
 public class DeleteCategoryCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext,
     IPublisher publisher) : IRequestHandler<DeleteCategoryCommand>
 {
     public async Task Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetCurrentUser();
-
-        if (!user.IsInRole(UserRoles.Admin))
-            throw new CustomeException("User not authorized");
-
         var category = await unitOfWork.Category.GetOrDefalutAsync(x => x.CategoryId
         == request.CategoryId);
 

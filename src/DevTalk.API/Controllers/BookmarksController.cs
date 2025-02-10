@@ -2,15 +2,9 @@
 using DevTalk.Application.Bookmark.commands.DeleteBookmark;
 using DevTalk.Application.Bookmark.Queries.GetAllBookmarks;
 using DevTalk.Application.Bookmark.Queries.GetBookmarkById;
-using DevTalk.Application.Category.Commands.CreateCategory;
-using DevTalk.Application.Category.Commands.DeleteCategory;
-using DevTalk.Application.Category.Queries.GetAllCategories;
-using DevTalk.Application.Category.Queries.GetCategoryById;
-using DevTalk.Application.Category.Queries.GetCategoryPosts;
 using DevTalk.Domain.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 

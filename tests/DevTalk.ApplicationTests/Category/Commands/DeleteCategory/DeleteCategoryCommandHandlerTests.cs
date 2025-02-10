@@ -13,24 +13,7 @@ namespace DevTalk.Application.Category.Commands.DeleteCategory.Tests;
 
 public class DeleteCategoryCommandHandlerTests
 {
-    [Fact]
-    public async Task Handle_WhenUserNotAuthorized_ThrowsCustomeException()
-    {
-        // Arrange
-        var command = new DeleteCategoryCommand("test_category_id");
-
-        var unitOfWorkMock = new Mock<IUnitOfWork>();
-        var publisherMock = new Mock<IPublisher>();
-
-        var userContextMock = new Mock<IUserContext>();
-        userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(new CurrentUser("user_id", "user@email.com", [UserRoles.User]));
-
-        var handler = new DeleteCategoryCommandHandler(unitOfWorkMock.Object, userContextMock.Object, publisherMock.Object);
-
-        // Act & Assert
-        await Xunit.Assert.ThrowsAsync<CustomeException>(() => handler.Handle(command, CancellationToken.None));
-    }
-
+    
     [Fact]
     public async Task Handle_WhenCategoryNotFound_ThrowsNotFoundException()
     {
@@ -47,7 +30,7 @@ public class DeleteCategoryCommandHandlerTests
         var userContextMock = new Mock<IUserContext>();
         userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(new CurrentUser("admin_id", "admin@email.com", [UserRoles.Admin]));
 
-        var handler = new DeleteCategoryCommandHandler(unitOfWorkMock.Object, userContextMock.Object, publisherMock.Object);
+        var handler = new DeleteCategoryCommandHandler(unitOfWorkMock.Object, publisherMock.Object);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
@@ -72,7 +55,7 @@ public class DeleteCategoryCommandHandlerTests
         var userContextMock = new Mock<IUserContext>();
         userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(new CurrentUser("admin_id", "admin@email.com", [UserRoles.Admin]));
 
-        var handler = new DeleteCategoryCommandHandler(unitOfWorkMock.Object, userContextMock.Object, publisherMock.Object);
+        var handler = new DeleteCategoryCommandHandler(unitOfWorkMock.Object, publisherMock.Object);
 
         // Act
         await handler.Handle(command, CancellationToken.None);
