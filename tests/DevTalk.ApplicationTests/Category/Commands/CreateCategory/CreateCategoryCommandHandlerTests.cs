@@ -12,24 +12,7 @@ namespace DevTalk.Application.Category.Commands.CreateCategory.Tests;
 
 public class CreateCategoryCommandHandlerTests
 {
-    [Fact]
-    public async Task Handle_WhenUserNotAuthorized_ThrowsCustomeException()
-    {
-        // Arrange
-        var command = new CreateCategoryCommand { CategoryName = "Tech" };
-
-        var unitOfWorkMock = new Mock<IUnitOfWork>();
-        var userContextMock = new Mock<IUserContext>();
-        var publisherMock = new Mock<IPublisher>();
-        userContextMock.Setup(uc => uc.GetCurrentUser())
-            .Returns(new CurrentUser("user_id", "user@email.com", new[] { UserRoles.User }));
-
-        var handler = new CreateCategoryCommandHandler(unitOfWorkMock.Object, userContextMock.Object, publisherMock.Object);
-
-        // Act & Assert
-        await Xunit.Assert.ThrowsAsync<CustomeException>(() => handler.Handle(command, CancellationToken.None));
-    }
-
+    
     [Fact]
     public async Task Handle_WhenUserIsAdmin_CreatesCategorySuccessfully()
     {
@@ -49,7 +32,7 @@ public class CreateCategoryCommandHandlerTests
         userContextMock.Setup(uc => uc.GetCurrentUser())
             .Returns(new CurrentUser("admin_id", "admin@email.com", new[] { UserRoles.Admin }));
 
-        var handler = new CreateCategoryCommandHandler(unitOfWorkMock.Object, userContextMock.Object, publisherMock.Object);
+        var handler = new CreateCategoryCommandHandler(unitOfWorkMock.Object, publisherMock.Object);
 
         // Act
         await handler.Handle(command, CancellationToken.None);

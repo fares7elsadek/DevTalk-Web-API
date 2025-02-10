@@ -3,6 +3,7 @@ using DevTalk.Application.Category.Commands.DeleteCategory;
 using DevTalk.Application.Category.Queries.GetAllCategories;
 using DevTalk.Application.Category.Queries.GetCategoryById;
 using DevTalk.Application.Category.Queries.GetCategoryPosts;
+using DevTalk.Domain.Constants;
 using DevTalk.Domain.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -84,7 +85,7 @@ namespace DevTalk.API.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = UserRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -95,7 +96,7 @@ namespace DevTalk.API.Controllers
         }
 
         [HttpDelete("{categoryId}")]
-        [Authorize]
+        [Authorize(Roles = UserRoles.Admin)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
