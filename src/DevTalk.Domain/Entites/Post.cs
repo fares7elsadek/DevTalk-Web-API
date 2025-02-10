@@ -9,6 +9,7 @@ public class Post
         Comments = new HashSet<Comment>();
         Categories = new HashSet<Categories>();
         PostCategories = new HashSet<PostCategory>();
+        Bookmarks = new HashSet<Bookmarks>();
     }
     public string PostId { get; set; } = default!;
     public string Title { get; set; } = default!;
@@ -22,4 +23,5 @@ public class Post
     public User User { get; set; } = default!;
     public ICollection<Categories> Categories { get; set; }
     public ICollection<PostCategory> PostCategories { get; set; }
+    public ICollection<Bookmarks> Bookmarks { get; set; }
 }
