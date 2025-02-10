@@ -11,5 +11,6 @@ public interface IUnitOfWork
     IPostVotesRepository PostVotes { get; }
     IUserRepository User { get; }
     ICategoryRepository Category { get; }
+    IBookmarkRepository Bookmark { get; }
     Task SaveAsync();
 }

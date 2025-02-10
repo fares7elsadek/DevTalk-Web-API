@@ -17,7 +17,7 @@ public class DeletePostCommandHandler(IUnitOfWork unitOfWork,
             throw new ArgumentNullException("id");
         var user = userContext.GetCurrentUser();
         var post = await unitOfWork.Post.GetOrDefalutAsync(d => d.PostId == id,
-            IncludeProperties: "PostMedias,Votes,Comments,User");
+            IncludeProperties: "PostMedias,Votes,Comments,User,Bookmarks");
         if(post == null)
             throw new NotFoundException(nameof(post),id);
 
@@ -36,6 +36,7 @@ public class DeletePostCommandHandler(IUnitOfWork unitOfWork,
         unitOfWork.PostMedia.RemoveRange(post.PostMedias);
         unitOfWork.Comment.RemoveRange(post.Comments);
         unitOfWork.PostVotes.RemoveRange(post.Votes);
+        unitOfWork.Bookmark.RemoveRange(post.Bookmarks);
         unitOfWork.Post.Remove(post);
         await unitOfWork.SaveAsync();
         await publisher.Publish(new DeletePostEvent(request.PostId));

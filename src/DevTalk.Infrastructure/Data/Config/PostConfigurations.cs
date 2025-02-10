@@ -37,5 +37,10 @@ public class PostConfigurations : IEntityTypeConfiguration<Post>
             .WithOne(x =>x.Post)
             .HasForeignKey(x => x.PostId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasMany(x => x.Bookmarks)
+            .WithOne(x => x.Post)
+            .HasForeignKey(x => x.PostId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

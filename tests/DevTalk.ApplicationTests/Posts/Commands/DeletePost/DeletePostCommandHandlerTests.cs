@@ -106,11 +106,16 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
             postVotesRepositoryMock.Setup(repo => repo.RemoveRange(It.IsAny<IEnumerable<PostVotes>>()))
                 .Verifiable();
 
+            var bookMarksRepositoryMock = new Mock<IBookmarkRepository>();
+            bookMarksRepositoryMock.Setup(repo => repo.RemoveRange(It.IsAny<IEnumerable<Bookmarks>>()))
+                .Verifiable();
+
             var unitOfWorkMock = new Mock<IUnitOfWork>();
             unitOfWorkMock.Setup(uow => uow.Post).Returns(postRepositoryMock.Object);
             unitOfWorkMock.Setup(uow => uow.PostMedia).Returns(postMediaRepositoryMock.Object);
             unitOfWorkMock.Setup(uow => uow.Comment).Returns(commentRepositoryMock.Object);
             unitOfWorkMock.Setup(uow => uow.PostVotes).Returns(postVotesRepositoryMock.Object);
+            unitOfWorkMock.Setup(uow => uow.Bookmark).Returns(bookMarksRepositoryMock.Object);
             unitOfWorkMock.Setup(uow => uow.SaveAsync()).Returns(Task.CompletedTask);
 
             var userContextMock = new Mock<IUserContext>();
@@ -156,11 +161,16 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
             postVotesRepositoryMock.Setup(repo => repo.RemoveRange(It.IsAny<IEnumerable<PostVotes>>()))
                 .Verifiable();
 
+            var bookMarksRepositoryMock = new Mock<IBookmarkRepository>();
+            bookMarksRepositoryMock.Setup(repo => repo.RemoveRange(It.IsAny<IEnumerable<Bookmarks>>()))
+                .Verifiable();
+
             var unitOfWorkMock = new Mock<IUnitOfWork>();
             unitOfWorkMock.Setup(uow => uow.Post).Returns(postRepositoryMock.Object);
             unitOfWorkMock.Setup(uow => uow.PostMedia).Returns(postMediaRepositoryMock.Object);
             unitOfWorkMock.Setup(uow => uow.Comment).Returns(commentRepositoryMock.Object);
             unitOfWorkMock.Setup(uow => uow.PostVotes).Returns(postVotesRepositoryMock.Object);
+            unitOfWorkMock.Setup(uow => uow.Bookmark).Returns(bookMarksRepositoryMock.Object);
             unitOfWorkMock.Setup(uow => uow.SaveAsync()).Returns(Task.CompletedTask);
 
             var userContextMock = new Mock<IUserContext>();
