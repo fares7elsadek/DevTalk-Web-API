@@ -8,15 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DevTalk.Application.Category.Commands.CreateCategory;
 
-public class CreateCategoryCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext,IPublisher publisher) : IRequestHandler<CreateCategoryCommand>
+public class CreateCategoryCommandHandler(IUnitOfWork unitOfWork,IPublisher publisher) : IRequestHandler<CreateCategoryCommand>
 {
     public async Task Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetCurrentUser();
-        if (!user.IsInRole(UserRoles.Admin))
-            throw new CustomeException("User not authorized");
-
         var newCategory = new Categories {  CategoryName = request.CategoryName };
         await unitOfWork.Category.AddAsync(newCategory);
         await unitOfWork.SaveAsync();
