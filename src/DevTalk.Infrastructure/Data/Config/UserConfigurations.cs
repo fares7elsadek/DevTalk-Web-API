@@ -39,7 +39,11 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.OwnsMany(x => x.RefreshTokens);
+        builder.HasMany(x => x.Bookmarks)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
+        builder.OwnsMany(x => x.RefreshTokens);
     }
 }

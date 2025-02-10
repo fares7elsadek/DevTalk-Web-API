@@ -10,6 +10,7 @@ public class User:IdentityUser
         Comments = new HashSet<Comment>();
         PostVotes = new HashSet<PostVotes>();
         CommentsVotes = new HashSet<CommentVotes>();
+        Bookmarks = new HashSet<Bookmarks>();
     }
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
@@ -22,4 +23,5 @@ public class User:IdentityUser
     public ICollection<PostVotes> PostVotes { get; set; }
     public ICollection<CommentVotes> CommentsVotes { get; set; }
     public List<RefreshToken>? RefreshTokens { get; set; }
+    public ICollection<Bookmarks> Bookmarks { get; set; }
 }
