@@ -15,6 +15,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options):IdentityDbCont
     public DbSet<PostMedia> PostMedia { get; set; }
     public DbSet<Categories> Category { get; set; }
     public DbSet<Bookmarks> Bookmarks { get; set; }
+    public DbSet<Preference> Preferences { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);

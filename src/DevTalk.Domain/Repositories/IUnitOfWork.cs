@@ -12,5 +12,6 @@ public interface IUnitOfWork
     IUserRepository User { get; }
     ICategoryRepository Category { get; }
     IBookmarkRepository Bookmark { get; }
+    IPreferenceRepository Preference { get; }
     Task SaveAsync();
 }

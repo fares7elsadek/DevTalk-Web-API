@@ -1,4 +1,5 @@
 ﻿using DevTalk.Application.ApplicationUser;
+using DevTalk.Application.Posts;
 using DevTalk.Domain.Constants;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Repositories;
@@ -36,7 +37,8 @@ public class DeleteCommentCommandHandler(IUnitOfWork unitOfWork,
             }
                 
         }
-        unitOfWork.Comment.Remove(comment);
+        post.Comments.Remove(comment);
+        post.PopularityScore = UpdatePostScore.UpdateScore(post);
         await unitOfWork.SaveAsync();
         await publisher.Publish(new DeleteCommentEvent(request.CommentId, request.PostId));
     }

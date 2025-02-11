@@ -1,4 +1,5 @@
 ﻿using DevTalk.Application.ApplicationUser;
+using DevTalk.Application.Posts;
 using DevTalk.Application.PostVote.Commands.CreatePostVoteDownVote;
 using DevTalk.Domain.Constants;
 using DevTalk.Domain.Entites;
@@ -34,20 +35,19 @@ public class CreatePostVoteCommandHandler(IUnitOfWork unitOfWork,
                 VoteType = VoteType.DownVote,
             };
             post.Votes.Add(newPostvote);
-            await unitOfWork.SaveAsync();
         }
         else
         {
             if (PostVote.VoteType == VoteType.DownVote)
             {
-                unitOfWork.PostVotes.Remove(PostVote);
-                await unitOfWork.SaveAsync();
+                post.Votes.Remove(PostVote);
             }
             else
             {
                 PostVote.VoteType = VoteType.DownVote;
-                await unitOfWork.SaveAsync();
             }
         }
+        post.PopularityScore = UpdatePostScore.UpdateScore(post);
+        await unitOfWork.SaveAsync();
     }
 }
