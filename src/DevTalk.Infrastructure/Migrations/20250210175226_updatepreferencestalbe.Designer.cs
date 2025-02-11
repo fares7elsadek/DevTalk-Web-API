@@ -4,6 +4,7 @@ using DevTalk.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevTalk.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250210175226_updatepreferencestalbe")]
+    partial class updatepreferencestalbe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,9 +143,6 @@ namespace DevTalk.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("PopularityScore")
-                        .HasColumnType("float");
-
                     b.Property<DateTime>("PostedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -163,8 +163,6 @@ namespace DevTalk.Infrastructure.Migrations
                     b.HasKey("PostId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("PopularityScore", "PostedAt", "PostId");
 
                     b.ToTable("Posts");
                 });
@@ -236,17 +234,26 @@ namespace DevTalk.Infrastructure.Migrations
                     b.ToTable("PostVotes");
                 });
 
-            modelBuilder.Entity("DevTalk.Domain.Entites.Preference", b =>
+            modelBuilder.Entity("DevTalk.Domain.Entites.Preferences", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("PreferenceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
 
                     b.Property<string>("CategoryId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("UserId", "CategoryId");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PreferenceId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Preferences");
                 });
@@ -584,7 +591,7 @@ namespace DevTalk.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DevTalk.Domain.Entites.Preference", b =>
+            modelBuilder.Entity("DevTalk.Domain.Entites.Preferences", b =>
                 {
                     b.HasOne("DevTalk.Domain.Entites.Categories", "Category")
                         .WithMany("Preferences")

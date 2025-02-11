@@ -1,0 +1,8 @@
+﻿using DevTalk.Domain.Entites;
+
+namespace DevTalk.Domain.Repositories;
+
+public interface IPreferenceRepository:IRepositories<Preference>
+{
+    public Task AddRangeAsync(IEnumerable<Preference> preferences);
+}

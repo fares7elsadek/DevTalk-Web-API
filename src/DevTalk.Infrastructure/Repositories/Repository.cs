@@ -45,6 +45,19 @@ public class Repository<T> : IRepositories<T> where T : class
         return await query.AsSplitQuery().Where(filter).ToListAsync();
     }
 
+    public async Task<IEnumerable<T>> GetAllWithPagination(Expression<Func<T, bool>> filter, long cursur, int pageSize, string? IncludeProperties = null)
+    {
+        IQueryable<T> query = this._dbSet;
+        if (!string.IsNullOrEmpty(IncludeProperties))
+        {
+            foreach (var property in IncludeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(property);
+            }
+        }
+        return await query.AsSplitQuery().Where(filter).ToListAsync();
+    }
+
     public async Task<T?> GetOrDefalutAsync(Expression<Func<T, bool>> filter, string? IncludeProperties = null)
     {
         IQueryable<T> query = _dbSet;

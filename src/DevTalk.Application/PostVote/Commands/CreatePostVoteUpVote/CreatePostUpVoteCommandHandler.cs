@@ -1,4 +1,5 @@
 ﻿using DevTalk.Application.ApplicationUser;
+using DevTalk.Application.Posts;
 using DevTalk.Domain.Constants;
 using DevTalk.Domain.Entites;
 using DevTalk.Domain.Exceptions;
@@ -33,22 +34,19 @@ public class CreatePostUpVoteCommandHandler(IUnitOfWork unitOfWork,
                 VoteType = VoteType.UpVote,
             };
             post.Votes.Add(newPostvote);
-            await unitOfWork.SaveAsync();
         }
         else
         {
             if(PostVote.VoteType == VoteType.UpVote)
             {
-                unitOfWork.PostVotes.Remove(PostVote);
-                await unitOfWork.SaveAsync();
+                post.Votes.Remove(PostVote);
             }
             else
             {
                 PostVote.VoteType = VoteType.UpVote;
-                await unitOfWork.SaveAsync();
             }
         }
-
-
+        post.PopularityScore = UpdatePostScore.UpdateScore(post);
+        await unitOfWork.SaveAsync();
     }
 }

@@ -23,6 +23,8 @@ public class PostConfigurations : IEntityTypeConfiguration<Post>
         builder.Property(x => x.PostedAt)
             .HasDefaultValueSql("GETDATE()");
 
+        builder.HasIndex(x => new { x.PopularityScore , x.PostedAt , x.PostId });
+
         builder.HasMany(x => x.Votes)
             .WithOne(x => x.Post)
             .HasForeignKey(x => x.PostId)
