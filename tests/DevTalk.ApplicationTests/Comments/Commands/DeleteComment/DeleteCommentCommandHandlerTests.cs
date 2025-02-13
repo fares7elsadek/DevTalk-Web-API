@@ -136,12 +136,10 @@ public class DeleteCommentCommandHandlerTests
         postRepositoryMock.Setup(repo => repo.GetOrDefalutAsync(It.IsAny<Expression<Func<Post, bool>>>(), It.IsAny<string>()))
             .ReturnsAsync(post);
 
-        var commentRepositoryMock = new Mock<ICommentRepository>();
-        commentRepositoryMock.Setup(repo => repo.Remove(It.IsAny<Comment>()));
+        
 
         var unitOfWorkMock = new Mock<IUnitOfWork>();
         unitOfWorkMock.Setup(uow => uow.Post).Returns(postRepositoryMock.Object);
-        unitOfWorkMock.Setup(uow => uow.Comment).Returns(commentRepositoryMock.Object);
         unitOfWorkMock.Setup(uow => uow.SaveAsync()).Returns(Task.CompletedTask);
 
         var userContextMock = new Mock<IUserContext>();
@@ -155,7 +153,6 @@ public class DeleteCommentCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        commentRepositoryMock.Verify(repo => repo.Remove(It.Is<Comment>(c => c.CommentId == commentId)), Times.Once);
         unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         publisherMock.Verify(p => p.Publish(It.Is<DeleteCommentEvent>(e =>
             e.CommentId == commentId && e.PostId == postId),
@@ -185,12 +182,10 @@ public class DeleteCommentCommandHandlerTests
         postRepositoryMock.Setup(repo => repo.GetOrDefalutAsync(It.IsAny<Expression<Func<Post, bool>>>(), It.IsAny<string>()))
             .ReturnsAsync(post);
 
-        var commentRepositoryMock = new Mock<ICommentRepository>();
-        commentRepositoryMock.Setup(repo => repo.Remove(It.IsAny<Comment>()));
+       
 
         var unitOfWorkMock = new Mock<IUnitOfWork>();
         unitOfWorkMock.Setup(uow => uow.Post).Returns(postRepositoryMock.Object);
-        unitOfWorkMock.Setup(uow => uow.Comment).Returns(commentRepositoryMock.Object);
         unitOfWorkMock.Setup(uow => uow.SaveAsync()).Returns(Task.CompletedTask);
 
         var userContextMock = new Mock<IUserContext>();
@@ -205,7 +200,6 @@ public class DeleteCommentCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        commentRepositoryMock.Verify(repo => repo.Remove(It.Is<Comment>(c => c.CommentId == commentId)), Times.Once);
         unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         publisherMock.Verify(p => p.Publish(It.Is<DeleteCommentEvent>(e =>
             e.CommentId == commentId && e.PostId == postId),
@@ -235,12 +229,10 @@ public class DeleteCommentCommandHandlerTests
         postRepositoryMock.Setup(repo => repo.GetOrDefalutAsync(It.IsAny<Expression<Func<Post, bool>>>(), It.IsAny<string>()))
             .ReturnsAsync(post);
 
-        var commentRepositoryMock = new Mock<ICommentRepository>();
-        commentRepositoryMock.Setup(repo => repo.Remove(It.IsAny<Comment>()));
+        
 
         var unitOfWorkMock = new Mock<IUnitOfWork>();
         unitOfWorkMock.Setup(uow => uow.Post).Returns(postRepositoryMock.Object);
-        unitOfWorkMock.Setup(uow => uow.Comment).Returns(commentRepositoryMock.Object);
         unitOfWorkMock.Setup(uow => uow.SaveAsync()).Returns(Task.CompletedTask);
 
         var userContextMock = new Mock<IUserContext>();
@@ -255,7 +247,6 @@ public class DeleteCommentCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        commentRepositoryMock.Verify(repo => repo.Remove(It.Is<Comment>(c => c.CommentId == commentId)), Times.Once);
         unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         publisherMock.Verify(p => p.Publish(It.Is<DeleteCommentEvent>(e =>
             e.CommentId == commentId && e.PostId == postId),

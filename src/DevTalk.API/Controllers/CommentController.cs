@@ -86,19 +86,10 @@ namespace DevTalk.API.Controllers
         public async Task<ActionResult<ApiResponse>> GetAllPostComments([FromRoute] string PostId,
             [FromQuery] int page = 1, [FromQuery] int size = 5)
         {
-            if (page < 0) page = 1;
-            var comments = await _mediator.Send(new GetAllCommentsByPostQuery(PostId));
-            int total = comments.Count();
-            if (size > total) size = 5;
-            int pages = (int)Math.Ceiling((decimal)total / size);
-            if (page > pages)
-            {
-                page = pages;
-            }
-            var FilteredComments = comments.Skip((page - 1) * size).Take(size).ToList();
+            var comments = await _mediator.Send(new GetAllCommentsByPostQuery(PostId,page,size));
             apiResponse.IsSuccess = true;
             apiResponse.StatusCode = HttpStatusCode.OK;
-            apiResponse.Result = FilteredComments;
+            apiResponse.Result = comments;
             return Ok(apiResponse);
         }
 

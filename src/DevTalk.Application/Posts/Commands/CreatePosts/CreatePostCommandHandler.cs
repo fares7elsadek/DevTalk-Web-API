@@ -33,14 +33,16 @@ public class CreatePostCommandHandler(IMapper mapper,
                 Categories = categories.ToList(),
             };
         }
-            
-        post = new Post
+        else
         {
-            Title = request.Title,
-            Body = request.Body,
-            UserId = user.userId,
-        };
-
+            post = new Post
+            {
+                Title = request.Title,
+                Body = request.Body,
+                UserId = user.userId,
+            };
+        }
+        
         if (request.Files == null || request.Files.Count == 0)
         {
             await unitOfWork.Post.AddAsync(post);

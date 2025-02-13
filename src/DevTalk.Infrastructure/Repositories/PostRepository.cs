@@ -44,7 +44,7 @@ public class PostRepository : Repository<Post>, IPostRepository
                 query = query.Include(property);
             }
         }
-
+        
         query = query.Where(p => p.Categories.Any(c => prefernceCategories.Contains(c.CategoryId)));
 
         if (scoreCursor.HasValue && dateTimeCursor.HasValue && !string.IsNullOrEmpty(idCursor))

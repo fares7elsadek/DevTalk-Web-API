@@ -4,8 +4,10 @@ using MediatR;
 
 namespace DevTalk.Application.Posts.Queries.GetAllPosts;
 
-public class GetAllPostsQuery : ICachableRequest<IEnumerable<PostDto>>
+public class GetAllPostsQuery(int pageSize,string cursor) : ICachableRequest<GetAllPostsDto>
 {
-    public string Key => "post:all";
+    public int PageSize { get; set; } = pageSize;
+    public string Cursor { get; set; } = cursor;
+    public string Key => $"post:{PageSize}:{Cursor}";
     public TimeSpan? CacheExpiryTime => throw new NotImplementedException();
 }
