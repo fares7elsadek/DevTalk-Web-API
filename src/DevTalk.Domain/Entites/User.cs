@@ -11,6 +11,7 @@ public class User:IdentityUser
         PostVotes = new HashSet<PostVotes>();
         CommentsVotes = new HashSet<CommentVotes>();
         Bookmarks = new HashSet<Bookmarks>();
+        Preferences = new HashSet<Preference>();
     }
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
@@ -24,4 +25,5 @@ public class User:IdentityUser
     public ICollection<CommentVotes> CommentsVotes { get; set; }
     public List<RefreshToken>? RefreshTokens { get; set; }
     public ICollection<Bookmarks> Bookmarks { get; set; }
+    public ICollection<Preference> Preferences { get; set; } 
 }

@@ -17,6 +17,7 @@ public class UnitOfWork : IUnitOfWork
     public IUserRepository User { get; private set; }
     public ICategoryRepository Category { get; private set; }
     public IBookmarkRepository Bookmark { get; private set; }
+    public IPreferenceRepository Preference { get; private set; }
 
     public UnitOfWork(AppDbContext db,IDistributedCache cache)
     {
@@ -29,6 +30,7 @@ public class UnitOfWork : IUnitOfWork
         PostVotes = new PostVotesRepository(_db);
         Category = new CategoryRepository(_db);
         Bookmark = new BookmarkRepository(_db);
+        Preference = new PreferenceRepository(_db);
     }
     public async Task SaveAsync()
     {

@@ -1,4 +1,5 @@
 ﻿using DevTalk.Application.ApplicationUser;
+using DevTalk.Application.Posts;
 using DevTalk.Domain.Constants;
 using DevTalk.Domain.Entites;
 using DevTalk.Domain.Exceptions;
@@ -28,7 +29,8 @@ public class CreateCommentCommandHandler(IUnitOfWork unitOfWork,
             PostId = id,
             UserId = user.userId,
         };
-        await unitOfWork.Comment.AddAsync(NewComment);
+        post.Comments.Add(NewComment);
+        post.PopularityScore = UpdatePostScore.UpdateScore(post);
         await unitOfWork.SaveAsync();
         await publisher.Publish(new CreateCommentEvent(NewComment.PostId)
         {

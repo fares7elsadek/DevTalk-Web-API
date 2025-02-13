@@ -140,6 +140,9 @@ namespace DevTalk.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<double>("PopularityScore")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("PostedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -160,6 +163,8 @@ namespace DevTalk.Infrastructure.Migrations
                     b.HasKey("PostId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("PopularityScore", "PostedAt", "PostId");
 
                     b.ToTable("Posts");
                 });
@@ -229,6 +234,21 @@ namespace DevTalk.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("PostVotes");
+                });
+
+            modelBuilder.Entity("DevTalk.Domain.Entites.Preference", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CategoryId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Preferences");
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.User", b =>
@@ -564,6 +584,25 @@ namespace DevTalk.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DevTalk.Domain.Entites.Preference", b =>
+                {
+                    b.HasOne("DevTalk.Domain.Entites.Categories", "Category")
+                        .WithMany("Preferences")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DevTalk.Domain.Entites.User", "User")
+                        .WithMany("Preferences")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DevTalk.Domain.Entites.User", b =>
                 {
                     b.OwnsMany("DevTalk.Domain.Entites.RefreshToken", "RefreshTokens", b1 =>
@@ -655,6 +694,8 @@ namespace DevTalk.Infrastructure.Migrations
             modelBuilder.Entity("DevTalk.Domain.Entites.Categories", b =>
                 {
                     b.Navigation("PostCategories");
+
+                    b.Navigation("Preferences");
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.Comment", b =>
@@ -686,6 +727,8 @@ namespace DevTalk.Infrastructure.Migrations
                     b.Navigation("PostVotes");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("Preferences");
                 });
 #pragma warning restore 612, 618
         }

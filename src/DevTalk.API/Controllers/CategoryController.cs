@@ -2,7 +2,6 @@
 using DevTalk.Application.Category.Commands.DeleteCategory;
 using DevTalk.Application.Category.Queries.GetAllCategories;
 using DevTalk.Application.Category.Queries.GetCategoryById;
-using DevTalk.Application.Category.Queries.GetCategoryPosts;
 using DevTalk.Domain.Constants;
 using DevTalk.Domain.Helpers;
 using MediatR;
@@ -28,45 +27,12 @@ namespace DevTalk.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> GetAllCategories(
-            [FromQuery] int page = 1, [FromQuery] int size = 5)
+        public async Task<ActionResult<ApiResponse>> GetAllCategories()
         {
-            if (page < 0) page = 1;
             var categories = await _mediator.Send(new GetAllCategoriesQuery());
-            int total = categories.Count();
-            if (size > total) size = 5;
-            int pages = (int)Math.Ceiling((decimal)total / size);
-            if (page > pages)
-            {
-                page = pages;
-            }
-            var Result = categories.Skip((page - 1) * size).Take(size).ToList();
             apiResponse.IsSuccess = true;
             apiResponse.StatusCode = HttpStatusCode.OK;
-            apiResponse.Result = Result;
-            return Ok(apiResponse);
-        }
-
-        [HttpGet("{categoryId}/posts")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> GetAllCategoryPosts(
-            [FromRoute] string categoryId,[FromQuery] int page = 1, [FromQuery] int size = 5)
-        {
-            if (page < 0) page = 1;
-            var Posts = await _mediator.Send(new GetCategoryPostsQuery(categoryId));
-            int total = Posts.Count();
-            if (size > total) size = 5;
-            int pages = (int)Math.Ceiling((decimal)total / size);
-            if (page > pages)
-            {
-                page = pages;
-            }
-            var Result = Posts.Skip((page - 1) * size).Take(size).ToList();
-            apiResponse.IsSuccess = true;
-            apiResponse.StatusCode = HttpStatusCode.OK;
-            apiResponse.Result = Result;
+            apiResponse.Result = categories;
             return Ok(apiResponse);
         }
 

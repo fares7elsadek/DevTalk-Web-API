@@ -13,15 +13,15 @@ public class GetAllBookmarksQueryHandler(
     public async Task<IEnumerable<BookmarkDto>> Handle(GetAllBookmarksQuery request, CancellationToken cancellationToken)
     {
         var userId = request.UserId;
-        var user = await unitOfWork.User.GetOrDefalutAsync(x => x.Id == userId,
-            IncludeProperties:"Bookmarks");
-        if (user is null)
-            throw new CustomeException("Something wrong has happened");
 
-        if (!user.Bookmarks.Any())
+        var bookmarks = await unitOfWork.Bookmark.GetAllWithPagination(x => x.UserId == userId,
+            request.Page,
+            request.Size,IncludeProperties:"Post");
+
+        if (!bookmarks.Any())
             throw new CustomeException("There's no bookmarks yet!");
 
-        var bookmarksDto = mapper.Map<IEnumerable<BookmarkDto>>(user.Bookmarks);
+        var bookmarksDto = mapper.Map<IEnumerable<BookmarkDto>>(bookmarks);
         return bookmarksDto;
     }
 }

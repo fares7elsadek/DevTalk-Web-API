@@ -19,5 +19,10 @@ public class CategoryConfigurations : IEntityTypeConfiguration<Categories>
         builder.HasMany(x => x.Posts)
             .WithMany(x => x.Categories)
             .UsingEntity<PostCategory>();
+
+        builder.HasMany(x => x.Preferences)
+            .WithOne(x => x.Category)
+            .HasForeignKey(x => x.CategoryId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

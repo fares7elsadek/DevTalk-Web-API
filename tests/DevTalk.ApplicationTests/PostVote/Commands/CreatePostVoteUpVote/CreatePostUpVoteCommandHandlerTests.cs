@@ -137,7 +137,6 @@ public class CreatePostUpVoteCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        unitOfWorkMock.Verify(uow => uow.PostVotes.Remove(existingVote), Times.Once);
         unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 

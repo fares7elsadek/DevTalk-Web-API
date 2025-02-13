@@ -21,6 +21,7 @@ public class Post
     public ICollection<Comment> Comments { get; set; }
     public string UserId { get; set; } = default!;
     public User User { get; set; } = default!;
+    public double PopularityScore { get; set; } 
     public ICollection<Categories> Categories { get; set; }
     public ICollection<PostCategory> PostCategories { get; set; }
     public ICollection<Bookmarks> Bookmarks { get; set; }

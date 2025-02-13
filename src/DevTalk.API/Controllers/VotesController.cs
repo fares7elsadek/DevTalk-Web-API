@@ -16,11 +16,9 @@ namespace DevTalk.API.Controllers
     {
 
         private readonly IMediator _mediator;
-        private ApiResponse apiResponse;
         public VotesController(IMediator mediator)
         {
             _mediator = mediator;
-            apiResponse = new ApiResponse();
         }
 
         [HttpPost("upvote")]
