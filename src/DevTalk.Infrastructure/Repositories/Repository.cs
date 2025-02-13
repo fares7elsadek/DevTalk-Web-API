@@ -1,6 +1,9 @@
-﻿using DevTalk.Domain.Repositories;
+﻿using Azure;
+using DevTalk.Domain.Entites;
+using DevTalk.Domain.Repositories;
 using DevTalk.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 using System.Linq.Expressions;
 
 namespace DevTalk.Infrastructure.Repositories;
@@ -45,9 +48,13 @@ public class Repository<T> : IRepositories<T> where T : class
         return await query.AsSplitQuery().Where(filter).ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> GetAllWithPagination(Expression<Func<T, bool>> filter, long cursur, int pageSize, string? IncludeProperties = null)
+    public async Task<IEnumerable<T>> GetAllWithPagination(Expression<Func<T, bool>> filter, int page, int size, string? IncludeProperties = null)
     {
-        IQueryable<T> query = this._dbSet;
+        IQueryable<T> query = this._dbSet.AsSplitQuery();
+        int total = query.Count();
+        if (total == 0)
+            return [];
+
         if (!string.IsNullOrEmpty(IncludeProperties))
         {
             foreach (var property in IncludeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
@@ -55,7 +62,17 @@ public class Repository<T> : IRepositories<T> where T : class
                 query = query.Include(property);
             }
         }
-        return await query.AsSplitQuery().Where(filter).ToListAsync();
+
+        if (page < 0) page = 1;
+        if (size > total) size = 5;
+        int pages = (int)Math.Ceiling((decimal)total / size);
+        if (page > pages)
+        {
+            page = pages;
+        }
+        
+        return await query.Where(filter).Skip((page - 1) * size)
+            .Take(size).ToListAsync();
     }
 
     public async Task<T?> GetOrDefalutAsync(Expression<Func<T, bool>> filter, string? IncludeProperties = null)

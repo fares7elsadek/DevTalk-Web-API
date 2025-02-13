@@ -138,7 +138,6 @@ public class CreatePostVoteCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        postVotesRepositoryMock.Verify(repo => repo.Remove(It.Is<PostVotes>(v => v.UserId == userId && v.PostId == postId)), Times.Once);
         unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 

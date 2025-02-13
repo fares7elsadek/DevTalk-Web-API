@@ -8,13 +8,23 @@ using Serilog;
 namespace DevTalk.Application.Posts.Queries.GetAllPosts;
 
 public class GetAllPostsQueryHandler(IMapper mapper,
-    IUnitOfWork unitOfWork) : IRequestHandler<GetAllPostsQuery, IEnumerable<PostDto>>
+    IUnitOfWork unitOfWork) : IRequestHandler<GetAllPostsQuery,GetAllPostsDto>
 {
-    public async Task<IEnumerable<PostDto>> Handle(GetAllPostsQuery request, CancellationToken cancellationToken)
+    public async Task<GetAllPostsDto> Handle(GetAllPostsQuery request, CancellationToken cancellationToken)
     {
-        Log.Information("Get all posts");
-        var Posts = await unitOfWork.Post.GetAllAsync(IncludeProperties: "PostMedias,Votes,Comments,User");
+        if (!Guid.TryParse(request.Cursor, out _))
+            request.Cursor = "";
+
+        var Posts = await unitOfWork.Post.GetAllPostsPagination(request.Cursor,request.PageSize,IncludeProperties: "PostMedias,Votes,Comments,User,Categories");
         var PostDto = mapper.Map<IEnumerable<PostDto>>(Posts);
-        return PostDto;
+
+        var lastPost = Posts.LastOrDefault();
+        var nextCursorId = lastPost?.PostId;
+        var resutlDto = new GetAllPostsDto
+        {
+            Id_cursor = nextCursorId!,
+            Posts = PostDto
+        };
+        return resutlDto;
     }
 }

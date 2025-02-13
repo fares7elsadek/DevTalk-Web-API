@@ -3,6 +3,7 @@ using DevTalk.Application.Posts.Commands.DeletePost;
 using DevTalk.Application.Posts.Commands.UpdatePosts;
 using DevTalk.Application.Posts.Dtos;
 using DevTalk.Application.Posts.Queries.GetAllPosts;
+using DevTalk.Application.Posts.Queries.GetFeedPosts;
 using DevTalk.Application.Posts.Queries.GetPostById;
 using DevTalk.Application.Posts.Queries.GetTrendingPosts;
 using DevTalk.Domain.Exceptions;
@@ -30,23 +31,17 @@ namespace DevTalk.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse>> GetAllPosts(
-            [FromQuery]int page=1, [FromQuery]int size = 5)
+            [FromQuery] string cursor = "",
+            [FromQuery]int pageSize = 10)
         {
-            if(page < 0) page = 1;
-            var Posts = await _mediator.Send(new GetAllPostsQuery());
-            int total = Posts.Count();
-            if (size > total) size = 5;
-            int pages = (int)Math.Ceiling((decimal)total / size);
-            if (page > pages)
-            {
-                page = pages;
-            }
-            var ResultPosts = Posts.Skip((page - 1) * size).Take(size).ToList();
+            if(pageSize < 0) pageSize = 10;
+            var result = await _mediator.Send(new GetAllPostsQuery(pageSize,cursor));
             apiResponse.IsSuccess=true;
             apiResponse.StatusCode = HttpStatusCode.OK;
-            apiResponse.Result = ResultPosts;
+            apiResponse.Result = result;
             return Ok(apiResponse);
         }
+
         [HttpGet("{PostId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -109,13 +104,53 @@ namespace DevTalk.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> GetTrendingPosts(
-            [FromQuery] int page = 1, [FromQuery] int size = 5)
+        public async Task<ActionResult<ApiResponse>> GetTrendingPosts([FromQuery] string timeCursor = ""
+            , [FromQuery] double scoreCursor = 0,
+            [FromQuery] string idCursor = "", [FromQuery] int size = 5
+            )
         {
-            var posts = await _mediator.Send(new GetTrendingPostsQuery(page, size));
+            var result = await _mediator.Send(new 
+                GetTrendingPostsQuery(idCursor,timeCursor,scoreCursor,size));
             apiResponse.IsSuccess = true;
             apiResponse.StatusCode = HttpStatusCode.OK;
-            apiResponse.Result = posts;
+            apiResponse.Result = result;
+            return Ok(apiResponse);
+        }
+
+        [HttpGet("feed")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse>> GetFeedPosts([FromQuery] string timeCursor = ""
+            , [FromQuery] double scoreCursor = 0,
+            [FromQuery] string idCursor = "", [FromQuery] int size = 5
+            )
+        {
+            var userId = User.FindFirst(c => c.Type == "uid")!.Value;
+            var result = await _mediator.Send(new
+                GetFeedPostsQuery(userId,idCursor, timeCursor, scoreCursor, size));
+            apiResponse.IsSuccess = true;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = result;
+            return Ok(apiResponse);
+        }
+
+        [HttpGet("category/{categoryId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse>> GetAllCategoryPosts([FromRoute] string categoryId,[FromQuery] string timeCursor = ""
+            , [FromQuery] double scoreCursor = 0,
+            [FromQuery] string idCursor = "", [FromQuery] int size = 5
+            )
+        {
+            var userId = User.FindFirst(c => c.Type == "uid")!.Value;
+            var result = await _mediator.Send(new
+                GetFeedPostsQuery(userId, idCursor, timeCursor, scoreCursor, size));
+            apiResponse.IsSuccess = true;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = result;
             return Ok(apiResponse);
         }
     }

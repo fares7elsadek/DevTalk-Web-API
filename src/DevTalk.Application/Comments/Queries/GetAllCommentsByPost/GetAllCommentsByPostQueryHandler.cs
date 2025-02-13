@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DevTalk.Application.Comments.Dtos;
+using DevTalk.Domain.Entites;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Repositories;
 using MediatR;
@@ -14,11 +15,14 @@ public class GetAllCommentsByPostQueryHandler(IUnitOfWork unitOfWork,
     {
         if(request.PostId == null)
             throw new ArgumentNullException("id");
-        var Post = await unitOfWork.Post.GetOrDefalutAsync(p => p.PostId == request.PostId,
+
+        var comments = await unitOfWork.Comment.GetAllWithPagination(p => p.PostId == request.PostId,request.Page,
+            request.Size,
             IncludeProperties: "Comments");
-        if(Post == null)
+
+        if(comments == null)
             throw new NotFoundException(nameof(Post),request.PostId);
-        var comments = Post.Comments.ToList();
+
         var CommentsDto = mapper.Map<IEnumerable<CommentDto>>(comments);
         return CommentsDto;
     }

@@ -4,49 +4,53 @@ using DevTalk.Domain.Constants;
 using DevTalk.Domain.Entites;
 using DevTalk.Domain.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System.Buffers.Text;
+using System.Globalization;
+using System.Text;
 
 namespace DevTalk.Application.Posts.Queries.GetTrendingPosts;
 
-public class GetTrendingPostsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<GetTrendingPostsQuery, IEnumerable<PostDto>>
+public class GetTrendingPostsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<GetTrendingPostsQuery,
+    GetUserPostsDto>
 {
-    public async Task<IEnumerable<PostDto>> Handle(GetTrendingPostsQuery request, CancellationToken cancellationToken)
+    public async Task<GetUserPostsDto> Handle(GetTrendingPostsQuery request, CancellationToken cancellationToken)
     {
-        int page = request.page;
-        int size = request.size;
+        var decodedTime = DateTimeCursorOperations.Decode(request.timeCursor);
+        var posts = await unitOfWork.Post.GetTrendingPostsPagination(request.IdCursor, decodedTime
+            , request.ScoreCursor, request.PageSize, IncludeProperties: "PostMedias,Votes,Comments,User,Categories");
 
-        if (page < 1) page = 1;
 
-        
-        var popularNow = await unitOfWork.Post.GetAllWithConditionAsync(
-            post => post.PostedAt >= DateTime.UtcNow.AddHours(-24),
-            IncludeProperties: "Comments,Votes"
-        );
+        var postsDto = mapper.Map<IEnumerable<PostDto>>(posts);
 
-        int total = popularNow.Count();
-        if (total == 0) return Enumerable.Empty<PostDto>(); 
-        if (size > total) size = total;
-
-        int totalPages = (int)Math.Ceiling((decimal)total / size);
-        if (page > totalPages) page = totalPages;
-
-        
-        var result = popularNow.Select(post => new
+        if (posts.Any())
         {
-            Post = post,
-            PopularityScore =
-                (post.Votes.Count(v => v.VoteType == VoteType.UpVote) * 2) +
-                (post.Comments.Count) -
-                (post.Votes.Count(v => v.VoteType == VoteType.DownVote) * 1.5)
-        })
-        .OrderByDescending(p => p.PopularityScore)
-        .Skip((page - 1) * size)
-        .Take(size)
-        .Select(p => p.Post) 
-        .ToList();
+            var lastPost = posts.LastOrDefault();
+            var idcursor = lastPost?.PostId;
+            var time = DateTimeCursorOperations.Encode(lastPost!.PostedAt);
+            var scoreCursor = lastPost.PopularityScore;
 
-        
-        var postsDto = mapper.Map<IEnumerable<PostDto>>(result);
-        return postsDto;
+
+
+            var resultcursor = new GetUserPostsDto
+            {
+                Id_cursor = idcursor!,
+                time_cursor = time,
+                score_cursor = scoreCursor,
+                Posts = postsDto
+            };
+            return resultcursor;
+        }
+
+        var result = new GetUserPostsDto
+        {
+            Id_cursor = "",
+            time_cursor = "",
+            score_cursor = 0,
+            Posts = postsDto
+        };
+
+        return result;
     }
 }
 

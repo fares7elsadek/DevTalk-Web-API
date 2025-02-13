@@ -1,4 +1,5 @@
-﻿using DevTalk.Application.Comments.Dtos;
+﻿using DevTalk.Application.Category.Dtos;
+using DevTalk.Application.Comments.Dtos;
 using DevTalk.Application.PostMedias.Dtos;
 using DevTalk.Application.PostVote.Dtos;
 using DevTalk.Domain.Entites;
@@ -22,6 +23,7 @@ public class PostDto
     public int Comments { get; set; }
     public string UserId { get; set; } = default!;
     public string Username { get; set; } = default!;
+    public double PopularityScore { get; set; } 
     public List<string> Categories { get; set; } = new();
 
 }
