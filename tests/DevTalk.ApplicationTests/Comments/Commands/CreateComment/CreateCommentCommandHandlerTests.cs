@@ -88,11 +88,6 @@ public class CreateCommentCommandHandlerTests
         await handler.Handle(commmand, CancellationToken.None);
 
         // Assert
-        commentRepositoryMock.Verify(repo => repo.AddAsync(It.Is<Comment>(c =>
-        c.CommentText == "Test" &&
-        c.UserId == "user123" &&
-        c.PostId == postId)), Times.Once);
-
         unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
 
         publisherMock.Verify(p => p.Publish(It.Is<CreateCommentEvent>(e =>

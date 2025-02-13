@@ -14,7 +14,7 @@ internal class GetPostByIdQueryHandler(IMapper mapper,
     {
         Log.Information($"Get Post with id {request.PostId}");
         var Post = await unitOfWork.Post.GetOrDefalutAsync(x => x.PostId == request.PostId,
-            IncludeProperties: "PostMedias,Votes,Comments,User");
+            IncludeProperties: "PostMedias,Votes,Comments,User,Categories");
         if (Post == null) throw new NotFoundException(nameof(Post), request.PostId);
         var PostDto = mapper.Map<PostDto>(Post);
         return PostDto;

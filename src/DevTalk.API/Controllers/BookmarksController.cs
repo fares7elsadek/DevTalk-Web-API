@@ -31,25 +31,17 @@ namespace DevTalk.API.Controllers
             [FromQuery] int page = 1, [FromQuery] int size = 5)
         {
             var userId = User.FindFirst(c => c.Type == "uid")!.Value;
-            if (page < 0) page = 1;
-            var bookmarks = await _mediator.Send(new GetAllBookmarksQuery(userId));
-            int total = bookmarks.Count();
-            if (size > total) size = 5;
-            int pages = (int)Math.Ceiling((decimal)total / size);
-            if (page > pages)
-            {
-                page = pages;
-            }
-            var result = bookmarks.Skip((page - 1) * size).Take(size).ToList();
+            var bookmarks = await _mediator.Send(new GetAllBookmarksQuery(userId,page,size));
             apiResponse.IsSuccess = true;
             apiResponse.StatusCode = HttpStatusCode.OK;
-            apiResponse.Result = result;
+            apiResponse.Result = bookmarks;
             return Ok(apiResponse);
         }
 
         
 
         [HttpGet("{bookmarkId}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

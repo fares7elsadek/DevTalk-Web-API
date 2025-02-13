@@ -7,6 +7,10 @@ public class BookmarkProfile:Profile
 {
     public BookmarkProfile()
     {
-        CreateMap<Bookmarks,BookmarkDto>().ReverseMap();
+        CreateMap<Bookmarks,BookmarkDto>()
+            .ForMember(x => x.Post,options =>
+            {
+                options.MapFrom(x => x.Post);
+            }).ReverseMap();
     }
 }

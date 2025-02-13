@@ -4,10 +4,13 @@ using MediatR;
 
 namespace DevTalk.Application.Posts.Queries.GetTrendingPosts;
 
-public class GetTrendingPostsQuery(int page,int size):ICachableRequest<IEnumerable<PostDto>>
+public class GetTrendingPostsQuery(string idCursor,string timeCursor
+    ,double scoreCursor,int pageSize):ICachableRequest<GetUserPostsDto>
 {
-    public int page { get; set; } = page;
-    public int size { get; set; } = size;
-    public string Key => "post:trending";
+    public string IdCursor { get; set; } = idCursor;
+    public string timeCursor { get; set; } = timeCursor;
+    public double ScoreCursor { get; set; } = scoreCursor;
+    public int PageSize { get; set; } = pageSize;
+    public string Key => $"post:trending:{IdCursor}:{timeCursor}:{ScoreCursor}:{PageSize}";
     public TimeSpan? CacheExpiryTime => throw new NotImplementedException();
 }
