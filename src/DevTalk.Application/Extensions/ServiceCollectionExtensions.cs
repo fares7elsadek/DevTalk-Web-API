@@ -21,6 +21,9 @@ using MediatR;
 using DevTalk.Application.Caching;
 using DevTalk.Application.Caching.Behavior;
 using StackExchange.Redis;
+using MassTransit;
+using DevTalk.Application.Notification.MessageQueue;
+using DevTalk.Application.Services.Notification;
 
 namespace DevTalk.Application.Extensions;
 
@@ -53,6 +56,16 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmailSender<User>,EmailSender>();
         services.AddScoped<ICachingService,CachingService>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
+        services.AddMassTransit(x =>
+        {
+            x.AddConsumer<NotificationConsumer>();
+
+            x.UsingInMemory((context, cfg) =>
+            {
+                cfg.ConfigureEndpoints(context);
+            });
+        });
+        services.AddScoped<INotificationService,NotificationService>();
     }
 
     public static void SeriLogConfigurations(this IHostBuilder host)
