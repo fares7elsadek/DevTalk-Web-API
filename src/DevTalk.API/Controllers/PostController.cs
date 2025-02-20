@@ -1,4 +1,5 @@
-﻿using DevTalk.Application.Posts.Commands.CreatePosts;
+﻿using DevTalk.API.Hubs;
+using DevTalk.Application.Posts.Commands.CreatePosts;
 using DevTalk.Application.Posts.Commands.DeletePost;
 using DevTalk.Application.Posts.Commands.UpdatePosts;
 using DevTalk.Application.Posts.Dtos;
@@ -6,11 +7,13 @@ using DevTalk.Application.Posts.Queries.GetAllPosts;
 using DevTalk.Application.Posts.Queries.GetFeedPosts;
 using DevTalk.Application.Posts.Queries.GetPostById;
 using DevTalk.Application.Posts.Queries.GetTrendingPosts;
+using DevTalk.Domain.Entites;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 
 namespace DevTalk.API.Controllers
@@ -21,7 +24,7 @@ namespace DevTalk.API.Controllers
     {
         private readonly IMediator _mediator;
         private ApiResponse apiResponse;
-        public PostController(IMediator mediator)
+        public PostController(IMediator mediator, IHubContext<NotificationHub> hubContext)
         {
             _mediator = mediator;
             apiResponse = new ApiResponse();
