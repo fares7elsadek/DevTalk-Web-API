@@ -12,6 +12,7 @@ public class User:IdentityUser
         CommentsVotes = new HashSet<CommentVotes>();
         Bookmarks = new HashSet<Bookmarks>();
         Preferences = new HashSet<Preference>();
+        Notifications = new HashSet<Notifications>();
     }
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
@@ -26,4 +27,5 @@ public class User:IdentityUser
     public List<RefreshToken>? RefreshTokens { get; set; }
     public ICollection<Bookmarks> Bookmarks { get; set; }
     public ICollection<Preference> Preferences { get; set; } 
+    public ICollection<Notifications> Notifications { get; set; }
 }

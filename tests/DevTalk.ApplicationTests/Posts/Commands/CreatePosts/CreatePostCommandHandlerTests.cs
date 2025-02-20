@@ -16,6 +16,8 @@ using DevTalk.Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using MassTransit;
+using MassTransit.Transports;
 
 namespace DevTalk.Application.Posts.Commands.CreatePosts.Tests
 {
@@ -37,10 +39,11 @@ namespace DevTalk.Application.Posts.Commands.CreatePosts.Tests
             var fileServiceMock = new Mock<IFileService>();
             var userContextMock = new Mock<IUserContext>();
             var publisherMock = new Mock<IPublisher>();
+            var publishEndpoint = new Mock<IPublishEndpoint>();
 
             userContextMock.Setup(uc => uc.GetCurrentUser()).Returns((CurrentUser)null);
 
-            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object);
+            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object, publishEndpoint.Object);
 
             // Act & Assert
             await Xunit.Assert.ThrowsAsync<CustomeException>(() => handler.Handle(command, CancellationToken.None));
@@ -72,8 +75,9 @@ namespace DevTalk.Application.Posts.Commands.CreatePosts.Tests
             userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(user);
 
             var publisherMock = new Mock<IPublisher>();
+            var publishEndpoint = new Mock<IPublishEndpoint>();
 
-            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object);
+            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object, publishEndpoint.Object);
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
@@ -112,8 +116,9 @@ namespace DevTalk.Application.Posts.Commands.CreatePosts.Tests
             userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(user);
 
             var publisherMock = new Mock<IPublisher>();
+            var publishEndpoint = new Mock<IPublishEndpoint>();
 
-            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object);
+            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object, publishEndpoint.Object);
 
             // Act & Assert
             await Xunit.Assert.ThrowsAsync<CustomeException>(() => handler.Handle(command, CancellationToken.None));
@@ -142,8 +147,9 @@ namespace DevTalk.Application.Posts.Commands.CreatePosts.Tests
             userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(user);
 
             var publisherMock = new Mock<IPublisher>();
+            var publishEndpoint = new Mock<IPublishEndpoint>();
 
-            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object);
+            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object, publishEndpoint.Object);
 
             // Act & Assert
             await Xunit.Assert.ThrowsAsync<CustomeException>(() => handler.Handle(command, CancellationToken.None));
@@ -180,8 +186,9 @@ namespace DevTalk.Application.Posts.Commands.CreatePosts.Tests
             userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(user);
 
             var publisherMock = new Mock<IPublisher>();
+            var publishEndpoint = new Mock<IPublishEndpoint>();
 
-            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object);
+            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object, publishEndpoint.Object);
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
