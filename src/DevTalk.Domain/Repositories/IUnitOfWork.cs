@@ -13,5 +13,6 @@ public interface IUnitOfWork
     ICategoryRepository Category { get; }
     IBookmarkRepository Bookmark { get; }
     IPreferenceRepository Preference { get; }
+    INotificationRepostiory Notification { get; }
     Task SaveAsync();
 }

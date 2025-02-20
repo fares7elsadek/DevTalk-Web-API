@@ -1,4 +1,5 @@
 using DevTalk.API.Extensions;
+using DevTalk.API.Hubs;
 using DevTalk.API.Middlewares;
 using DevTalk.Application.Extensions;
 using DevTalk.Infrastructure.Extensions;
@@ -14,7 +15,7 @@ public class Program
         try
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.AddSignalR();
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.AddPresentation();
             builder.Services.AddApplication();
@@ -39,6 +40,7 @@ public class Program
             app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.MapHub<NotificationHub>("/notifications");
             app.UseSerilogRequestLogging();
             app.MapControllers();
 

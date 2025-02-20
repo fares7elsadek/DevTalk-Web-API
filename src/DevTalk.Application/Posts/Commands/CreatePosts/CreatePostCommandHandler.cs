@@ -7,12 +7,14 @@ using DevTalk.Domain.Entites;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Repositories;
 using MediatR;
+using MassTransit;
+using DevTalk.Application.Notification.MessageQueue;
 
 namespace DevTalk.Application.Posts.Commands.CreatePosts;
 
 public class CreatePostCommandHandler(IMapper mapper,
     IUnitOfWork unitOfWork,IFileService fileService,
-    IUserContext userContext,IPublisher publisher) : IRequestHandler<CreatePostCommand, PostDto>
+    IUserContext userContext,IPublisher publisher,IPublishEndpoint publishEndpoint) : IRequestHandler<CreatePostCommand, PostDto>
 {
     public async Task<PostDto> Handle(CreatePostCommand request, CancellationToken cancellationToken)
     {
@@ -22,7 +24,8 @@ public class CreatePostCommandHandler(IMapper mapper,
         Post post;
         if(request.Categories is not null)
         {
-            var categories = await unitOfWork.Category.GetAllWithConditionAsync(x => request.Categories.Contains(x.CategoryId));
+            var categories = await unitOfWork.Category.GetAllWithConditionAsync(x => request.Categories.Contains(x.CategoryId)
+            ,IncludeProperties: "Preferences");
             if (request.Categories.Count != categories.ToList().Count)
                 throw new CustomeException("One or more selected categories are invalid.");
             post = new Post
@@ -32,6 +35,22 @@ public class CreatePostCommandHandler(IMapper mapper,
                 UserId = user.userId,
                 Categories = categories.ToList(),
             };
+            List<string> SubscribedUsers = new List<string>();
+            foreach(var category in categories)
+            {
+                foreach(var prefernces in category.Preferences)
+                {
+                    SubscribedUsers.Add(prefernces.UserId);
+                }
+            }
+
+            await publishEndpoint.Publish(new NotificationMessage
+            {
+                UserIds = SubscribedUsers,
+                Content = $"New post published: {request.Title}",
+                Timestamp = DateTime.UtcNow
+            });
+
         }
         else
         {
