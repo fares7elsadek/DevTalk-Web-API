@@ -171,8 +171,7 @@ namespace DevTalk.API.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false, 
-                SameSite = SameSiteMode.None,
+                Secure = true, 
                 Expires = expires
             };
 
