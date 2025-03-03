@@ -37,7 +37,7 @@ public class Program
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCors();
+            app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapHub<NotificationHub>("/notifications");
