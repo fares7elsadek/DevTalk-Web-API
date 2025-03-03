@@ -33,15 +33,5 @@ public static class  ServiceCollectionExtensions
                 }
             });
         });
-
-        builder.Services.AddCors( opt =>
-        {
-            opt.AddPolicy("AllowAll", policy =>
-            {
-                policy.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-            });
-        });
     }
 }

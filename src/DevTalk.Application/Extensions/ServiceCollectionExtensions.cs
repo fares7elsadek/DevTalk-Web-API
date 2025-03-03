@@ -42,10 +42,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserContext, UserContext>();
         services.AddCors(options =>
         {
-            options.AddDefaultPolicy(
-            policy =>
+            options.AddPolicy("AllowSpecificOrigins", policy =>
             {
-                policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader(); 
+                policy.WithOrigins("http://localhost:3000") 
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials(); 
             });
         });
         services.Configure<FormOptions>(options =>
