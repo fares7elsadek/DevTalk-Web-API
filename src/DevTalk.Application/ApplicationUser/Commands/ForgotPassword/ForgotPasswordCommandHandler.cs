@@ -12,7 +12,7 @@ using System.Text;
 namespace DevTalk.Application.ApplicationUser.Commands.ForgotPassword;
 
 public class ForgotPasswordCommandHandler(UserManager<User> userManager,
-    IEmailSender<User> emailSender, LinkGenerator linkGenerator,
+    IEmailSender<User> emailSender,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<ForgotPasswordCommand, string>
 {
     public async Task<string> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
@@ -45,9 +45,7 @@ public class ForgotPasswordCommandHandler(UserManager<User> userManager,
             ["Token"] = encodedCode
         };
 
-        var confirmEmailEndpointName = "reset-password";
-        var confirmEmailUrl = linkGenerator.GetUriByName(httpContextAccessor.HttpContext, confirmEmailEndpointName, routeValues)
-            ?? throw new NotSupportedException($"Could not find endpoint named '{confirmEmailEndpointName}'.");
+        var confirmEmailUrl = $"https://dev-talk-phi.vercel.app/reset-password?userId={user.Id}&token={encodedCode}";
 
 
         user.ForgetPasswordResetLinkRequestedAt = DateTime.UtcNow;

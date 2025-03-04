@@ -13,7 +13,7 @@ using System.Text;
 
 namespace DevTalk.Application.ApplicationUser.Commands.RegisterUser;
 public class RegisterUserCommandHandler(UserManager<User> userManager,
-    IMapper mapper,LinkGenerator linkGenerator
+    IMapper mapper
     , IHttpContextAccessor httpContextAccessor,IEmailSender<User> emailSender) : IRequestHandler<RegisterUserCommand, AuthResponse>
 {
     public async Task<AuthResponse> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -78,9 +78,7 @@ public class RegisterUserCommandHandler(UserManager<User> userManager,
             ["userId"] = userId,
             ["code"] = code
         };
-        var confirmEmailEndpointName = "ConfirmEmail";
-        var confirmEmailUrl = linkGenerator.GetUriByName(httpContext, confirmEmailEndpointName, routeValues)
-            ?? throw new NotSupportedException($"Could not find endpoint named '{confirmEmailEndpointName}'.");
+        var confirmEmailUrl = $"https://dev-talk-phi.vercel.app/confirm-email?userId={user.Id}&code={code}";
 
         if (user.Email == null)
             throw new CustomeException("User email is not defined");
