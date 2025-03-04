@@ -172,6 +172,9 @@ namespace DevTalk.API.Controllers
             {
                 HttpOnly = true,
                 Expires = expires,
+                Secure = true, // Required for HTTPS
+                SameSite = SameSiteMode.None, // Allow cross-site usage
+                Path = "/" // Make cookie available for all paths
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
