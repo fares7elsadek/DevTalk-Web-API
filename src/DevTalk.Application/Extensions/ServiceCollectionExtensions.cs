@@ -44,10 +44,10 @@ public static class ServiceCollectionExtensions
         {
             options.AddPolicy("AllowSpecificOrigins", policy =>
             {
-                policy.AllowAnyHeader()
-                      .AllowAnyMethod()
-                      .AllowCredentials()
-                      .SetIsOriginAllowed(origin => true);
+                policy.WithOrigins("https://dev-talk-phi.vercel.app","https://localhost:3000") 
+                   .AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .AllowCredentials(); 
             });
         });
         services.Configure<FormOptions>(options =>
