@@ -171,7 +171,9 @@ namespace DevTalk.API.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = expires
+                Expires = expires,
+                Secure = true,
+                SameSite = SameSiteMode.None
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
