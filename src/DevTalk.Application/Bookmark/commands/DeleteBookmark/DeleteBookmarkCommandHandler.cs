@@ -10,26 +10,17 @@ public class DeleteBookmarkCommandHandler(IUserContext userContext,
 {
     public async Task Handle(DeleteBookmarkCommand request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetCurrentUser();
-        if (user == null)
-            throw new CustomeException("User not authorized");
+        string userId = userContext.GetCurrentUser().userId;
 
-        var post = await unitOfWork.Post.GetOrDefalutAsync(x => x.PostId == request.PostId);
-        if (post == null)
-            throw new NotFoundException(nameof(post), request.PostId);
+        var bookmark = await unitOfWork.Bookmark
+            .GetOrDefalutAsync(x => x.PostId == request.PostId && x.UserId == userId);
 
-        var appUser = await unitOfWork.User.GetOrDefalutAsync(x => x.Id == user.userId,
-            IncludeProperties: "Bookmarks");
-
-        if (appUser == null)
-            throw new CustomeException("Somthing wrong has happened");
-
-        var bookmark = appUser.Bookmarks.FirstOrDefault(x => x.PostId == request.PostId);
         if (bookmark is null)
             throw new CustomeException("Post is not in the bookmarks list");
 
         unitOfWork.Bookmark.Remove(bookmark);
         await unitOfWork.SaveAsync();
-        await publisher.Publish(new DeleteBookmarkEvent(request.PostId,user.userId));
+
+        await publisher.Publish(new DeleteBookmarkEvent(request.PostId, userId), cancellationToken);
     }
 }

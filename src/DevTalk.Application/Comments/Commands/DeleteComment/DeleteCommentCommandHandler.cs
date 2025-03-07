@@ -8,38 +8,31 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DevTalk.Application.Comments.Commands.DeleteComment;
 
-public class DeleteCommentCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext,IPublisher publisher) : IRequestHandler<DeleteCommentCommand>
+public class DeleteCommentCommandHandler(IUnitOfWork unitOfWork
+    ,IPublisher publisher) : IRequestHandler<DeleteCommentCommand>
 {
     public async Task Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
     {
-        if (request.PostId == null || request.CommentId ==null)
-            throw new ArgumentNullException("id");
+        if (string.IsNullOrEmpty(request.PostId) || string.IsNullOrEmpty(request.CommentId))
+            throw new ArgumentNullException(nameof(request));
 
-        var user = userContext.GetCurrentUser();
-        var post = await unitOfWork.Post.GetOrDefalutAsync(d => d.PostId == request.PostId,
-            IncludeProperties: "Comments,User");
-      
-        if (post == null)
-            throw new NotFoundException(nameof(post), request.PostId);
+        var comment = await unitOfWork.Comment
+            .GetOrDefalutAsync(c => c.CommentId == request.CommentId && c.PostId == request.PostId);
 
-        var comment = post.Comments.SingleOrDefault(c => c.CommentId == request.CommentId);
-
-        if(comment == null)
+        if (comment is null)
             throw new NotFoundException(nameof(comment), request.CommentId);
 
-        if (!user.IsInRole(UserRoles.Admin))
+        // Remove comment
+        unitOfWork.Comment.Remove(comment);
+
+        // Update post score
+        var post = await unitOfWork.Post.GetOrDefalutAsync(p => p.PostId == request.PostId);
+        if (post != null)
         {
-            if (user.userId != comment.UserId)
-            {
-                if(user.userId != post.UserId)
-                    throw new CustomeException("User not authorized");
-            }
-                
+            post.PopularityScore = UpdatePostScore.UpdateScore(post);
         }
-        post.Comments.Remove(comment);
-        post.PopularityScore = UpdatePostScore.UpdateScore(post);
+
         await unitOfWork.SaveAsync();
-        await publisher.Publish(new DeleteCommentEvent(request.CommentId, request.PostId));
+        await publisher.Publish(new DeleteCommentEvent(request.CommentId, request.PostId), cancellationToken);
     }
 }

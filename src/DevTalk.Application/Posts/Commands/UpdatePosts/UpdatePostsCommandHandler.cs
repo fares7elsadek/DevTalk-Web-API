@@ -1,47 +1,49 @@
-﻿using DevTalk.Application.ApplicationUser;
-using DevTalk.Domain.Constants;
-using DevTalk.Domain.Exceptions;
+﻿using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Repositories;
 using MediatR;
 
 namespace DevTalk.Application.Posts.Commands.UpdatePosts;
 
 public class UpdatePostsCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext,IPublisher publisher) : IRequestHandler<UpdatePostsCommand>
+    IPublisher publisher) : IRequestHandler<UpdatePostsCommand>
 {
     public async Task Handle(UpdatePostsCommand request, CancellationToken cancellationToken)
     {
-        if(string.IsNullOrWhiteSpace(request.Title) && string.IsNullOrWhiteSpace(request.Body)) 
+        if (request.PostId == null)
+            throw new ArgumentNullException(nameof(request.PostId), "Post ID cannot be null");
+
+        if (string.IsNullOrWhiteSpace(request.Title) && string.IsNullOrWhiteSpace(request.Body))
             throw new CustomeException("You must update at least one field");
 
-        var id = request.PostId;
-        if (id == null)
-            throw new ArgumentNullException("id");
-        var user = userContext.GetCurrentUser();
-        var post = await unitOfWork.Post.GetOrDefalutAsync(d => d.PostId == id,
-            IncludeProperties: "User");
-        if (post == null)
-            throw new NotFoundException(nameof(post), id);
+        var post = await unitOfWork.Post
+            .GetOrDefalutAsync(d => d.PostId == request.PostId);
 
-        if (!user.IsInRole(UserRoles.Admin))
+        if (post == null)
+            throw new NotFoundException(nameof(post), request.PostId);
+
+        bool isUpdated = false;
+
+        if (!string.IsNullOrWhiteSpace(request.Title) && post.Title != request.Title)
         {
-            var PostUserId = post.User.Id;
-            if (user.userId != PostUserId)
-                throw new CustomeException("User not authroized");
+            post.Title = request.Title;
+            isUpdated = true;
         }
 
-        
-        if(!string.IsNullOrWhiteSpace(request.Title))
-            post.Title = request.Title;
-        if(!string.IsNullOrWhiteSpace(request.Body))
+        if (!string.IsNullOrWhiteSpace(request.Body) && post.Body != request.Body)
+        {
             post.Body = request.Body;
-        unitOfWork.Post.Update(post);
+            isUpdated = true;
+        }
+
+        if (!isUpdated) return; 
+
+        await unitOfWork.SaveAsync(); 
+
         await publisher.Publish(new UpdatePostEvent
         {
             Title = request.Title,
             Body = request.Body,
-            PostId = id,
-        });
-        await unitOfWork.SaveAsync();
+            PostId = request.PostId
+        }, cancellationToken);
     }
 }

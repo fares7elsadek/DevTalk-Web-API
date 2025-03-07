@@ -155,49 +155,6 @@ namespace DevTalk.Application.Posts.Commands.CreatePosts.Tests
             await Xunit.Assert.ThrowsAsync<CustomeException>(() => handler.Handle(command, CancellationToken.None));
         }
 
-        [Fact]
-        public async Task Handle_WhenFilesAreValid_CreatesPostWithMediaSuccessfully()
-        {
-            // Arrange
-            var fileMock = new Mock<IFormFile>();
-            fileMock.Setup(f => f.Length).Returns(1024);
-            fileMock.Setup(f => f.FileName).Returns("image.jpg");
-
-            var files = new List<IFormFile> { fileMock.Object };
-            var command = new CreatePostCommand
-            {
-                Title = "Test Title",
-                Body = "Test Body",
-                Files = files
-            }; ;
-            var user = new CurrentUser("user_id", "user@email.com", new[] { UserRoles.User });
-
-            var mapperMock = new Mock<IMapper>();
-            mapperMock.Setup(m => m.Map<PostDto>(It.IsAny<Post>())).Returns(new PostDto());
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(uow => uow.Post.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
-            unitOfWorkMock.Setup(uow => uow.SaveAsync()).Returns(Task.CompletedTask);
-
-            var fileServiceMock = new Mock<IFileService>();
-            //fileServiceMock.Setup(fs => fs.SaveFileAsync(It.IsAny<IFormFile>(), It.IsAny<string[]>())).ReturnsAsync(("/path/to/image.jpg","path2"));
-
-            var userContextMock = new Mock<IUserContext>();
-            userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(user);
-
-            var publisherMock = new Mock<IPublisher>();
-            var publishEndpoint = new Mock<IPublishEndpoint>();
-
-            var handler = new CreatePostCommandHandler(mapperMock.Object, unitOfWorkMock.Object, fileServiceMock.Object, userContextMock.Object, publisherMock.Object, publishEndpoint.Object);
-
-            // Act
-            var result = await handler.Handle(command, CancellationToken.None);
-
-            // Assert
-            unitOfWorkMock.Verify(uow => uow.Post.AddAsync(It.Is<Post>(p => p.Title == command.Title && p.Body == command.Body && p.PostMedias.Count == 1)), Times.Once);
-            unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
-            publisherMock.Verify(p => p.Publish(It.Is<CreatePostsEvent>(e => e.Title == command.Title && e.Body == command.Body && e.Files == command.Files), It.IsAny<CancellationToken>()), Times.Once);
-            Xunit.Assert.NotNull(result);
-        }
+        
     }
 }

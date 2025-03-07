@@ -24,6 +24,8 @@ using StackExchange.Redis;
 using MassTransit;
 using DevTalk.Application.Notification.MessageQueue;
 using DevTalk.Application.Services.Notification;
+using DevTalk.Application.Services.PermissionAuthorization;
+using DevTalk.Application.Behaviors;
 
 
 namespace DevTalk.Application.Extensions;
@@ -59,6 +61,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmailSender<User>,EmailSender>();
         services.AddScoped<ICachingService,CachingService>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>),typeof(AuthorizationBehavior<,>));
         services.AddMassTransit(x =>
         {
             x.AddConsumer<NotificationConsumer>();
@@ -69,7 +72,7 @@ public static class ServiceCollectionExtensions
             });
         });
         services.AddScoped<INotificationService,NotificationService>();
-        //services.AddScoped<BlobServiceClient>();
+        services.AddScoped<IPermissionAuthorizationService,PermissionAuthorizationService>();
     }
 
     public static void SeriLogConfigurations(this IHostBuilder host)

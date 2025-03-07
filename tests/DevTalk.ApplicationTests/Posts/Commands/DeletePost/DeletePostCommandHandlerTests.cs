@@ -13,22 +13,7 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
 {
     public class DeletePostCommandHandlerTests
     {
-        [Fact]
-        public async Task Handle_WhenPostIdIsNull_ThrowsArgumentNullException()
-        {
-            // Arrange
-            var command = new DeletePostCommand(null);
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            var userContextMock = new Mock<IUserContext>();
-            var fileServiceMock = new Mock<IFileService>();
-            var publisherMock = new Mock<IPublisher>();
-
-            var handler = new DeletePostCommandHandler(unitOfWorkMock.Object, userContextMock.Object, fileServiceMock.Object, publisherMock.Object);
-
-            // Act & Assert
-            await Xunit.Assert.ThrowsAsync<ArgumentNullException>(() => handler.Handle(command, CancellationToken.None));
-        }
-
+        
         [Fact]
         public async Task Handle_WhenPostNotFound_ThrowsNotFoundException()
         {
@@ -47,38 +32,10 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
             var fileServiceMock = new Mock<IFileService>();
             var publisherMock = new Mock<IPublisher>();
 
-            var handler = new DeletePostCommandHandler(unitOfWorkMock.Object, userContextMock.Object, fileServiceMock.Object, publisherMock.Object);
+            var handler = new DeletePostCommandHandler(unitOfWorkMock.Object, fileServiceMock.Object, publisherMock.Object);
 
             // Act & Assert
             await Xunit.Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
-        }
-
-        [Fact]
-        public async Task Handle_WhenUserNotAuthorized_ThrowsCustomeException()
-        {
-            // Arrange
-            var postId = "valid_post_id";
-            var command = new DeletePostCommand(postId);
-
-            var post = new Post { PostId = postId, User = new User { Id = "post_owner_id" } };
-
-            var postRepositoryMock = new Mock<IPostRepository>();
-            postRepositoryMock.Setup(repo => repo.GetOrDefalutAsync(It.IsAny<Expression<Func<Post, bool>>>(), It.IsAny<string>()))
-                .ReturnsAsync(post);
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(uow => uow.Post).Returns(postRepositoryMock.Object);
-
-            var userContextMock = new Mock<IUserContext>();
-            userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(new CurrentUser("unauthorized_id", "user@email.com", [UserRoles.User]));
-
-            var fileServiceMock = new Mock<IFileService>();
-            var publisherMock = new Mock<IPublisher>();
-
-            var handler = new DeletePostCommandHandler(unitOfWorkMock.Object, userContextMock.Object, fileServiceMock.Object, publisherMock.Object);
-
-            // Act & Assert
-            await Xunit.Assert.ThrowsAsync<CustomeException>(() => handler.Handle(command, CancellationToken.None));
         }
 
         [Fact]
@@ -124,7 +81,7 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
             var fileServiceMock = new Mock<IFileService>();
             var publisherMock = new Mock<IPublisher>();
 
-            var handler = new DeletePostCommandHandler(unitOfWorkMock.Object, userContextMock.Object, fileServiceMock.Object, publisherMock.Object);
+            var handler = new DeletePostCommandHandler(unitOfWorkMock.Object, fileServiceMock.Object, publisherMock.Object);
 
             // Act
             await handler.Handle(command, CancellationToken.None);
@@ -179,7 +136,7 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
             var fileServiceMock = new Mock<IFileService>();
             var publisherMock = new Mock<IPublisher>();
 
-            var handler = new DeletePostCommandHandler(unitOfWorkMock.Object, userContextMock.Object, fileServiceMock.Object, publisherMock.Object);
+            var handler = new DeletePostCommandHandler(unitOfWorkMock.Object, fileServiceMock.Object, publisherMock.Object);
 
             // Act
             await handler.Handle(command, CancellationToken.None);

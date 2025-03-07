@@ -8,37 +8,26 @@ using MediatR;
 namespace DevTalk.Application.Posts.Commands.DeletePost;
 
 public class DeletePostCommandHandler(IUnitOfWork unitOfWork,
-    IUserContext userContext,IFileService fileService,IPublisher publisher) : IRequestHandler<DeletePostCommand>
+    IFileService fileService,IPublisher publisher) : IRequestHandler<DeletePostCommand>
 {
     public async Task Handle(DeletePostCommand request, CancellationToken cancellationToken)
     {
-        var id = request.PostId;
-        if(id == null)
-            throw new ArgumentNullException("id");
-        var user = userContext.GetCurrentUser();
-        var post = await unitOfWork.Post.GetOrDefalutAsync(d => d.PostId == id,
-            IncludeProperties: "PostMedias,Votes,Comments,User,Bookmarks");
-        if(post == null)
-            throw new NotFoundException(nameof(post),id);
+        var post = await unitOfWork.Post.GetOrDefalutAsync(
+            d => d.PostId == request.PostId,
+            IncludeProperties: "PostMedias,Votes,Comments,Bookmarks");
 
-        if (!user.IsInRole(UserRoles.Admin))
-        {
-            var PostUserId = post.User.Id;
-            if (user.userId != PostUserId)
-                throw new CustomeException("User not authroized");
-        }
+        if (post is null)
+            throw new NotFoundException(nameof(post), request.PostId);
 
-        var postMediasPath = post.PostMedias.Select(x => x.MediaFileName).ToList();
-        foreach(var path in postMediasPath)
-        {
-            await fileService.DeleteFile(path);
-        }
+        await Task.WhenAll(post.PostMedias.Select(x => fileService.DeleteFile(x.MediaFileName)));
+
         unitOfWork.PostMedia.RemoveRange(post.PostMedias);
         unitOfWork.Comment.RemoveRange(post.Comments);
         unitOfWork.PostVotes.RemoveRange(post.Votes);
         unitOfWork.Bookmark.RemoveRange(post.Bookmarks);
         unitOfWork.Post.Remove(post);
+
         await unitOfWork.SaveAsync();
-        await publisher.Publish(new DeletePostEvent(request.PostId));
+        await publisher.Publish(new DeletePostEvent(request.PostId), cancellationToken);
     }
 }
