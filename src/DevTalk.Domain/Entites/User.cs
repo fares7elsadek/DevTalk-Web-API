@@ -16,7 +16,8 @@ public class User:IdentityUser
     }
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
-    public string? Avatar { get; set; }
+    public string? AvatarUrl { get; set; }
+    public string? AvatarFileName { get; set; }
     public DateOnly? BirthOfDate { get; set; }
     public string? LastEmailConfirmationToken { get; set; }
     public DateTime? ForgetPasswordResetLinkRequestedAt { get; set; }

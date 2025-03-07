@@ -13,6 +13,7 @@ public class UserProfile:Profile
         .ReverseMap();
 
         CreateMap<User, UserDto>()
+            .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id))
         .ReverseMap();
     }
 }

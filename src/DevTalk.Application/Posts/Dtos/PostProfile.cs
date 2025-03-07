@@ -11,9 +11,9 @@ public class PostProfile:Profile
     public PostProfile()
     {
         CreateMap<Post, PostDto>()
-            .ForMember(d => d.Username,opt =>
+            .ForMember(d => d.User,opt =>
             {
-                opt.MapFrom(src => src.User == null ? null : src.User.UserName);
+                opt.MapFrom(src => src.User);
             })
             .ForMember(d => d.PostMedias,opt =>
             {
