@@ -4,6 +4,6 @@ namespace DevTalk.Application.Services;
 
 public interface IFileService
 {
-    Task<string> SaveFileAsync(IFormFile file, string[] allowedExtensions);
-    void DeleteFile(string FileName);
+    Task<(string,string)> SaveFileAsync(IFormFile file, string[] allowedExtensions);
+    Task DeleteFile(string FileName);
 }

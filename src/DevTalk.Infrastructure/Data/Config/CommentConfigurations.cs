@@ -13,7 +13,7 @@ public class CommentConfigurations : IEntityTypeConfiguration<Comment>
             .HasDefaultValueSql("newid()");
 
         builder.Property(x => x.CommentText)
-            .HasColumnType("text");
+            .HasColumnType("nvarchar(max)");
 
         builder.Property(x => x.CommentedAt)
             .HasDefaultValueSql("GETDATE()");

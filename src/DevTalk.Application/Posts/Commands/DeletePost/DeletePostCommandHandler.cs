@@ -28,10 +28,10 @@ public class DeletePostCommandHandler(IUnitOfWork unitOfWork,
                 throw new CustomeException("User not authroized");
         }
 
-        var postMediasPath = post.PostMedias.Select(x => x.MediaPath).ToList();
+        var postMediasPath = post.PostMedias.Select(x => x.MediaFileName).ToList();
         foreach(var path in postMediasPath)
         {
-            fileService.DeleteFile(path);
+            await fileService.DeleteFile(path);
         }
         unitOfWork.PostMedia.RemoveRange(post.PostMedias);
         unitOfWork.Comment.RemoveRange(post.Comments);

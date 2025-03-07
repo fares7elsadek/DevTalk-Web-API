@@ -25,6 +25,7 @@ using MassTransit;
 using DevTalk.Application.Notification.MessageQueue;
 using DevTalk.Application.Services.Notification;
 
+
 namespace DevTalk.Application.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -68,6 +69,7 @@ public static class ServiceCollectionExtensions
             });
         });
         services.AddScoped<INotificationService,NotificationService>();
+        //services.AddScoped<BlobServiceClient>();
     }
 
     public static void SeriLogConfigurations(this IHostBuilder host)

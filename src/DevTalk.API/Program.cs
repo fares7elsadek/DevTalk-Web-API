@@ -2,6 +2,7 @@ using DevTalk.API.Extensions;
 using DevTalk.API.Hubs;
 using DevTalk.API.Middlewares;
 using DevTalk.Application.Extensions;
+using DevTalk.Domain.Extensions;
 using DevTalk.Infrastructure.Extensions;
 using DevTalk.Infrastructure.Seeder;
 using Serilog;
@@ -19,6 +20,7 @@ public class Program
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.AddPresentation();
             builder.Services.AddApplication();
+            builder.Services.AddDomain(builder.Configuration);
             builder.Services.AddEndpointsApiExplorer();
 
             var app = builder.Build();

@@ -17,7 +17,7 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
             .HasMaxLength(300);
 
         builder.Property(x => x.Avatar)
-            .HasColumnType("text");
+            .HasColumnType("nvarchar(max)");
 
         builder.HasMany(x => x.Posts)
             .WithOne(x => x.User)

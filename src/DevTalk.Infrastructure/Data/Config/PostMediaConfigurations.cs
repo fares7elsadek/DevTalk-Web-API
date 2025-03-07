@@ -12,8 +12,8 @@ public class PostMediaConfigurations : IEntityTypeConfiguration<PostMedia>
         builder.Property(x => x.PostMediaId)
             .HasDefaultValueSql("newid()");
 
-        builder.Property(x => x.MediaPath)
-            .HasColumnType("text");
+        builder.Property(x => x.MediaUrl)
+            .HasColumnType("nvarchar(max)");
 
     }
 }

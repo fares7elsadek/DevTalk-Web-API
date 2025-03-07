@@ -180,7 +180,7 @@ namespace DevTalk.Application.Posts.Commands.CreatePosts.Tests
             unitOfWorkMock.Setup(uow => uow.SaveAsync()).Returns(Task.CompletedTask);
 
             var fileServiceMock = new Mock<IFileService>();
-            fileServiceMock.Setup(fs => fs.SaveFileAsync(It.IsAny<IFormFile>(), It.IsAny<string[]>())).ReturnsAsync("/path/to/image.jpg");
+            //fileServiceMock.Setup(fs => fs.SaveFileAsync(It.IsAny<IFormFile>(), It.IsAny<string[]>())).ReturnsAsync(("/path/to/image.jpg","path2"));
 
             var userContextMock = new Mock<IUserContext>();
             userContextMock.Setup(uc => uc.GetCurrentUser()).Returns(user);

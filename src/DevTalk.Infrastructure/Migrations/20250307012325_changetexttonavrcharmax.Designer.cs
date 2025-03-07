@@ -4,6 +4,7 @@ using DevTalk.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevTalk.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250307012325_changetexttonavrcharmax")]
+    partial class changetexttonavrcharmax
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,11 +224,7 @@ namespace DevTalk.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<string>("MediaFileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MediaUrl")
+                    b.Property<string>("MediaPath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

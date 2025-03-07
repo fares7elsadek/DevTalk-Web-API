@@ -18,7 +18,7 @@ public class PostConfigurations : IEntityTypeConfiguration<Post>
             .HasMaxLength(300);
 
         builder.Property(x => x.Body)
-            .HasColumnType("text");
+            .HasColumnType("nvarchar(max)");
 
         builder.Property(x => x.PostedAt)
             .HasDefaultValueSql("GETDATE()");

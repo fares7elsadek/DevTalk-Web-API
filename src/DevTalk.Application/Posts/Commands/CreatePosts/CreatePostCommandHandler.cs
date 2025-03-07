@@ -99,13 +99,15 @@ public class CreatePostCommandHandler(IMapper mapper,
                     {
                         ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" 
                     };
-                    var mediaPath = await fileService.SaveFileAsync(file, allowedImageExtensions);
-                    if (string.IsNullOrEmpty(mediaPath))
+                    var (url,filename) = await fileService.SaveFileAsync(file, allowedImageExtensions);
+                    if (string.IsNullOrEmpty(url))
                         throw new CustomeException("somthing wrong has happend");
-                    newPostMedia.MediaPath = mediaPath;
+                    newPostMedia.MediaUrl = url;
+                    newPostMedia.MediaFileName = filename;
                     postMedias.Add(newPostMedia);
                 }
             }
+
             post.PostMedias= postMedias;
             await unitOfWork.Post.AddAsync(post);
             await unitOfWork.SaveAsync();

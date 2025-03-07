@@ -1,35 +1,27 @@
-﻿using DevTalk.Domain.Exceptions;
+﻿using Azure.Storage.Blobs;
+using DevTalk.Domain.Exceptions;
+using DevTalk.Domain.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace DevTalk.Application.Services;
 
-public class FileService(IWebHostEnvironment environment) : IFileService
+public class FileService(IOptions<BlobStorageOptions> blobOptions) : IFileService
 {
-    public void DeleteFile(string FileName)
+    private readonly BlobStorageOptions _options = blobOptions.Value;
+    public async Task DeleteFile(string FileName)
     {
-        if (string.IsNullOrEmpty(FileName))
-        {
-            throw new ArgumentNullException(nameof(FileName));
-        }
-        var contentPath = environment.WebRootPath;
-        var path = Path.Combine(contentPath, $"Uploads", FileName);
-
-        if (!File.Exists(path))
-        {
-            throw new CustomeException($"Invalid file path");
-        }
-        File.Delete(path);
+        var blobServiceClient = new BlobServiceClient(_options.ConnectionString);
+        var blobContainer = blobServiceClient.GetBlobContainerClient(_options.PhotosContainerName);
+        var blobClient = blobContainer.GetBlobClient(FileName);
+        await blobClient.DeleteIfExistsAsync();
     }
 
-    public async Task<string> SaveFileAsync(IFormFile file, string[] allowedExtensions)
+    public async Task<(string, string)> SaveFileAsync(IFormFile file, string[] allowedExtensions)
     {
-        if(file == null) throw new ArgumentNullException(nameof(file));
+        if (file == null) throw new ArgumentNullException(nameof(file));
 
-        var ContentPath = environment.WebRootPath;
-        var path = Path.Combine(ContentPath, "Uploads");
-        
-        if(!Directory.Exists(path)) Directory.CreateDirectory(path);
         var ext = Path.GetExtension(file.FileName);
         if (!allowedExtensions.Contains(ext))
         {
@@ -37,9 +29,21 @@ public class FileService(IWebHostEnvironment environment) : IFileService
         }
 
         var fileName = $"{Guid.NewGuid().ToString()}{ext}";
-        var fileNameWithPath = Path.Combine(path, fileName);
-        using var stream = new FileStream(fileNameWithPath, FileMode.Create);
-        await file.CopyToAsync(stream);
-        return fileName;
+        Console.WriteLine(_options.ConnectionString);
+        var blobServiceClient = new BlobServiceClient(_options.ConnectionString);
+        var blobContainer = blobServiceClient.GetBlobContainerClient(_options.PhotosContainerName);
+        await blobContainer.CreateIfNotExistsAsync();
+        var blobClient = blobContainer.GetBlobClient(fileName);
+
+        await using (var stream = file.OpenReadStream())
+        {
+            await blobClient.UploadAsync(stream, true);
+        }
+
+        return (blobClient.Uri.ToString(), fileName);
     }
 }
+
+
+
+
