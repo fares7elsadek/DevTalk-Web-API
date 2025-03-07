@@ -48,7 +48,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bookmarks");
+                    b.ToTable("Bookmarks", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.Categories", b =>
@@ -65,7 +65,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.Comment", b =>
@@ -101,7 +101,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.CommentVotes", b =>
@@ -126,7 +126,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CommentVotes");
+                    b.ToTable("CommentVotes", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.Notifications", b =>
@@ -156,7 +156,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.Post", b =>
@@ -196,7 +196,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasIndex("PopularityScore", "PostedAt", "PostId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.PostCategory", b =>
@@ -211,7 +211,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("PostCategory");
+                    b.ToTable("PostCategory", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.PostMedia", b =>
@@ -240,7 +240,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostMedia");
+                    b.ToTable("PostMedia", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.PostVotes", b =>
@@ -267,7 +267,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PostVotes");
+                    b.ToTable("PostVotes", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.Preference", b =>
@@ -282,7 +282,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Preferences");
+                    b.ToTable("Preferences", (string)null);
                 });
 
             modelBuilder.Entity("DevTalk.Domain.Entites.User", b =>
@@ -679,7 +679,7 @@ namespace DevTalk.Infrastructure.Migrations
 
                             b1.HasKey("UserId", "Id");
 
-                            b1.ToTable("RefreshToken");
+                            b1.ToTable("RefreshToken", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");

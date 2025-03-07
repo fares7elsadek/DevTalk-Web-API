@@ -1,7 +1,9 @@
 ﻿using DevTalk.Domain.Entites;
 using DevTalk.Domain.Repositories;
 using DevTalk.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Distributed;
+using System.Data;
 
 namespace DevTalk.Infrastructure.Repositories;
 
@@ -37,5 +39,11 @@ public class UnitOfWork : IUnitOfWork
     public async Task SaveAsync()
     {
         await _db.SaveChangesAsync();
+    }
+
+    public IDbTransaction BeginTransaction()
+    {
+        var transaction = _db.Database.BeginTransaction();
+        return transaction.GetDbTransaction();
     }
 }

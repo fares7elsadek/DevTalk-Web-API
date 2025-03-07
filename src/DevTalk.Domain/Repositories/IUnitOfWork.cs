@@ -1,4 +1,5 @@
 ﻿using DevTalk.Domain.Entites;
+using System.Data;
 
 namespace DevTalk.Domain.Repositories;
 
@@ -15,4 +16,5 @@ public interface IUnitOfWork
     IPreferenceRepository Preference { get; }
     INotificationRepostiory Notification { get; }
     Task SaveAsync();
+    public IDbTransaction BeginTransaction();
 }
