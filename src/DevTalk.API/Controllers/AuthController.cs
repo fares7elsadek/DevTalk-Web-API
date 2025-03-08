@@ -1,16 +1,20 @@
 ﻿using DevTalk.Application.ApplicationUser.Commands.ConfirmEmail;
 using DevTalk.Application.ApplicationUser.Commands.CreateRefreshToken;
 using DevTalk.Application.ApplicationUser.Commands.ForgotPassword;
+using DevTalk.Application.ApplicationUser.Commands.GoogleSingInCallback;
 using DevTalk.Application.ApplicationUser.Commands.LoginUser;
 using DevTalk.Application.ApplicationUser.Commands.RegisterUser;
 using DevTalk.Application.ApplicationUser.Commands.ResendConfirmationLink;
 using DevTalk.Application.ApplicationUser.Commands.ResetPassword;
+using DevTalk.Domain.Entites;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DevTalk.API.Controllers
 {
@@ -20,10 +24,12 @@ namespace DevTalk.API.Controllers
     {
         private readonly IMediator _mediator;
         private ApiResponse apiResponse;
-        public AuthController(IMediator mediator)
+        private SignInManager<User> _signInManager;
+        public AuthController(IMediator mediator, SignInManager<User> signInManager)
         {
             _mediator = mediator;
             apiResponse = new ApiResponse();
+            _signInManager = signInManager;
         }
 
         [HttpPost("register")]
@@ -164,6 +170,41 @@ namespace DevTalk.API.Controllers
             SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
             return Ok(result);
         }
+
+        [HttpGet("signin/google")]
+        [ProducesResponseType(StatusCodes.Status307TemporaryRedirect)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult GoogleSignIn(string returnUrl = null)
+        {
+            var redirectUrl = Url.Action("SignInGoogleCallback", "Auth", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+            return Challenge(properties, "Google");
+        }
+
+        [HttpGet("google-callback")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> SignInGoogleCallback(string returnUrl = null, string remoteError = null)
+        {
+            var command = new GoogleSingInCallbackCommand(remoteError);
+            var authResponse = await _mediator.Send(command);
+            if (!authResponse.IsAuthenticated)
+                return BadRequest(authResponse);
+            if (!string.IsNullOrEmpty(authResponse.RefreshToken))
+                SetRefreshTokenInCookie(authResponse.RefreshToken, authResponse.RefreshTokenExpiration);
+
+            apiResponse.IsSuccess = true;
+            apiResponse.Errors = null;
+            apiResponse.StatusCode = HttpStatusCode.OK;
+            apiResponse.Result = authResponse;
+            return Ok(apiResponse);
+        }
+
+
 
         [SwaggerIgnore]
         public void SetRefreshTokenInCookie(string refreshToken, DateTime expires)

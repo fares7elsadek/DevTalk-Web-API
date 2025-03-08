@@ -11,6 +11,8 @@ using DevTalk.Domain.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 
 namespace DevTalk.Infrastructure.Extensions;
@@ -63,7 +65,20 @@ public static class ServiceCollectionExtensions
                     ValidAudience = configuration["JWT:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
                 };
+            })
+            .AddCookie(opt =>
+            {
+                opt.Cookie.SameSite = SameSiteMode.None;
+                opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            })
+            .AddGoogle(options =>
+            {
+                options.ClientId = configuration["GoogleOauth:ClientID"]!;
+                options.ClientSecret = configuration["GoogleOauth:ClientSecret"]!;
+                options.CallbackPath = "/api/auth/signin-google";
             });
+
+
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetConnectionString("rediscs");

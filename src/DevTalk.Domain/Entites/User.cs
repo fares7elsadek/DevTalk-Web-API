@@ -15,7 +15,7 @@ public class User:IdentityUser
         Notifications = new HashSet<Notifications>();
     }
     public string FirstName { get; set; } = default!;
-    public string LastName { get; set; } = default!;
+    public string? LastName { get; set; } = default!;
     public string? AvatarUrl { get; set; }
     public string? AvatarFileName { get; set; }
     public DateOnly? BirthOfDate { get; set; }

@@ -6,6 +6,8 @@ using DevTalk.Application.ApplicationUser.Commands.RegisterUser;
 using System.Net;
 using DevTalk.Domain.Helpers;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using DevTalk.Domain.Entites;
 
 namespace DevTalk.API.Controllers.Tests
 {
@@ -13,11 +15,12 @@ namespace DevTalk.API.Controllers.Tests
     {
         private readonly Mock<IMediator> _mediatorMock;
         private readonly AuthController _authController;
+        private readonly Mock<SignInManager<User>> _signInManagerMock;
 
         public AuthControllerTests()
         {
             _mediatorMock = new Mock<IMediator>();
-            _authController = new AuthController(_mediatorMock.Object);
+            _authController = new AuthController(_mediatorMock.Object, _signInManagerMock.Object);
         }
 
         [Fact]

@@ -9,5 +9,6 @@ public static class ServiceCollectionsExtensions
     public static void AddDomain(this IServiceCollection services,IConfiguration configuration)
     {
         services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
+        services.Configure<GoogleOauthOptions>(configuration.GetSection("GoogleOauth"));
     }
 }
