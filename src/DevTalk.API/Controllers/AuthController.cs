@@ -197,11 +197,21 @@ namespace DevTalk.API.Controllers
             if (!string.IsNullOrEmpty(authResponse.RefreshToken))
                 SetRefreshTokenInCookie(authResponse.RefreshToken, authResponse.RefreshTokenExpiration);
 
-            apiResponse.IsSuccess = true;
-            apiResponse.Errors = null;
-            apiResponse.StatusCode = HttpStatusCode.OK;
-            apiResponse.Result = authResponse;
-            return Ok(apiResponse);
+            var script = $@"
+                  <html>
+                    <body>
+                      <script>
+                        window.opener.postMessage({{
+                          token: '{authResponse.Token}',
+                          email: '{authResponse.Email}',
+                          username: '{authResponse.Username}'
+                        }}, 'https://dev-talk-phi.vercel.app');
+                        window.close();
+                      </script>
+                    </body>
+                  </html>";
+
+            return Content(script, "text/html");
         }
 
 
