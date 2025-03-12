@@ -11,6 +11,6 @@ public class GetTrendingPostsQuery(string idCursor,string timeCursor
     public string timeCursor { get; set; } = timeCursor;
     public double ScoreCursor { get; set; } = scoreCursor;
     public int PageSize { get; set; } = pageSize;
-    public string Key => $"post:trending:{IdCursor}:{timeCursor}:{ScoreCursor}:{PageSize}";
+    public string Key => $"post:page:trending:{IdCursor}:{timeCursor}:{ScoreCursor}:{PageSize}";
     public TimeSpan? CacheExpiryTime => throw new NotImplementedException();
 }

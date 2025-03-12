@@ -13,6 +13,6 @@ public class GetFeedPostsQuery(string userId,
     public double ScoreCursor { get; set; } = scoreCursor;
     public int PageSize { get; set; } = pageSize;
     public string UserId { get; set; } = userId;
-    public string Key => $"feed:user:{UserId}:{IdCursor}:{timeCursor}:{PageSize}";
+    public string Key => $"post:page:feed:user:{UserId}:{IdCursor}:{timeCursor}:{PageSize}";
     public TimeSpan? CacheExpiryTime => throw new NotImplementedException();
 }

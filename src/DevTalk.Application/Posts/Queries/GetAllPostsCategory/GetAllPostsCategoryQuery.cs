@@ -13,6 +13,6 @@ public class GetAllPostsCategoryQuery(
     public double ScoreCursor { get; set; } = scoreCursor;
     public int PageSize { get; set; } = pageSize;
     public string CategoryId { get; set; } = categoryId;
-    public string Key => $"post:category:{CategoryId}:{IdCursor}:{timeCursor}:{PageSize}";
+    public string Key => $"post:page:category:{CategoryId}:{IdCursor}:{timeCursor}:{PageSize}";
     public TimeSpan? CacheExpiryTime => throw new NotImplementedException();
 }

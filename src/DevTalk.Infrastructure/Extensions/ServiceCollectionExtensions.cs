@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 
 
 namespace DevTalk.Infrastructure.Extensions;
@@ -82,6 +83,12 @@ public static class ServiceCollectionExtensions
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetConnectionString("rediscs");
+        });
+        
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+        {
+            var config = configuration.GetConnectionString("rediscs");
+            return ConnectionMultiplexer.Connect(config);
         });
     }
 }

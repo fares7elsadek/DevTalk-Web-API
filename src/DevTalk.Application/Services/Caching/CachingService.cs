@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace DevTalk.Application.Services.Caching;
 
-public class CachingService(IDistributedCache cache) : ICachingService
+public class CachingService(IDistributedCache cache, IConnectionMultiplexer redis) : ICachingService
 {
+    private readonly IDatabase _redisDb = redis.GetDatabase();
     public async Task<T?> GetData<T>(string key)
     {
         var value = await cache.GetStringAsync(key);
@@ -46,6 +48,17 @@ public class CachingService(IDistributedCache cache) : ICachingService
         catch (Exception ex)
         {
             return false;
+        }
+    }
+    
+    public async Task RemoveByPattern(string pattern)
+    {
+        var server = redis.GetServer(redis.GetEndPoints().First());
+        var keys = server.Keys(pattern: pattern).ToList();
+
+        if (keys.Any())
+        {
+            await Task.WhenAll(keys.Select(x => cache.RemoveAsync(x)));
         }
     }
 }

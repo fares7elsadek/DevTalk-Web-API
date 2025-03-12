@@ -8,6 +8,6 @@ public class GetAllPostsQuery(int pageSize,string cursor) : ICachableRequest<Get
 {
     public int PageSize { get; set; } = pageSize;
     public string Cursor { get; set; } = cursor;
-    public string Key => $"post:{PageSize}:{Cursor}";
+    public string Key => $"post:page:{Cursor}:{pageSize}";
     public TimeSpan? CacheExpiryTime => throw new NotImplementedException();
 }

@@ -17,7 +17,7 @@ public class CachingBehavior<TRequest, TResponse>(ICachingService cache) : IPipe
         var response = await next();
 
         // cache the response 
-        await cache.SetData(request.Key, response, DateTimeOffset.Now.AddMinutes(2));
+        await cache.SetData(request.Key, response, DateTimeOffset.Now.AddMinutes(5));
 
         return response;
     }

@@ -30,7 +30,6 @@ public class CacheInvalidationPostHandler(ICachingService cache) : INotification
 
     public async Task InternalHandler()
     {
-        await cache.RemoveData("post:all");
-        await cache.RemoveData("post:trending");
+        await cache.RemoveByPattern("post:page:*");
     }
 }
