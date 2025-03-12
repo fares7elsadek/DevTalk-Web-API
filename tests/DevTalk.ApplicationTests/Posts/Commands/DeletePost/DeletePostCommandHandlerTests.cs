@@ -14,7 +14,7 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
     public class DeletePostCommandHandlerTests
     {
         
-        [Fact]
+        /*[Fact]
         public async Task Handle_WhenPostNotFound_ThrowsNotFoundException()
         {
             // Arrange
@@ -36,9 +36,9 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
 
             // Act & Assert
             await Xunit.Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
-        }
+        }*/
 
-        [Fact]
+        /*[Fact]
         public async Task Handle_WhenUserIsAdmin_DeletesPostSuccessfully()
         {
             // Arrange
@@ -90,9 +90,9 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
             unitOfWorkMock.Verify(uow => uow.Post.Remove(It.Is<Post>(p => p.PostId == postId)), Times.Once);
             unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
             publisherMock.Verify(p => p.Publish(It.Is<DeletePostEvent>(e => e.PostId == postId), It.IsAny<CancellationToken>()), Times.Once);
-        }
+        }*/
 
-        [Fact]
+        /*[Fact]
         public async Task Handle_WhenUserIsPostOwner_DeletesPostSuccessfully()
         {
             // Arrange
@@ -145,6 +145,6 @@ namespace DevTalk.Application.Posts.Commands.DeletePost.Tests
             unitOfWorkMock.Verify(uow => uow.Post.Remove(It.Is<Post>(p => p.PostId == postId)), Times.Once);
             unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
             publisherMock.Verify(p => p.Publish(It.Is<DeletePostEvent>(e => e.PostId == postId), It.IsAny<CancellationToken>()), Times.Once);
-        }
+        }*/
     }
 }

@@ -4,6 +4,7 @@ using DevTalk.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
 
 namespace DevTalk.Infrastructure.Repositories;
 
@@ -62,6 +63,20 @@ public class PostRepository : Repository<Post>, IPostRepository
                      .Take(pageSize);
 
         return await query.ToListAsync();
+    }
+
+    public async Task<bool> DeletePostWithRelation(string postId)
+    {
+        var postIdParam = new SqlParameter("@postId",postId);
+        var statusParam = new SqlParameter
+        {
+            ParameterName = "@status",
+            SqlDbType = System.Data.SqlDbType.Int,
+            Direction = System.Data.ParameterDirection.Output
+        };
+        await _db.Database.ExecuteSqlRawAsync("EXEC DeletePostWithRelations @postId, @status OUTPUT", postIdParam, statusParam);
+        int status = (int)statusParam.Value;
+        return status == 1;
     }
 
     public async Task<IEnumerable<Post>> GetTrendingPostsPagination(string idCursor, DateTime? dateTimeCursor, double? scoreCursor, int pageSize, string? IncludeProperties = null)
