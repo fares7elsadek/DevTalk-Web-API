@@ -10,6 +10,6 @@ public class PostVotesConfigurations : IEntityTypeConfiguration<PostVotes>
     {
         builder.HasKey(x => x.VoteId);
         builder.Property(x => x.VoteId)
-            .HasDefaultValueSql("newid()");
+            .HasDefaultValueSql("gen_random_uuid()");
     }
 }

@@ -19,10 +19,8 @@ public class DeletePostCommandHandler(IUnitOfWork unitOfWork,
         
         List<string> FilesNames = post.PostMedias.Select(x => x.MediaFileName).ToList();
         
-        bool result = await unitOfWork.Post.DeletePostWithRelation(request.PostId);
-        
-        if (!result)
-            throw new CustomeException("Something wrong has happened");
+        unitOfWork.Post.Remove(post);
+        await unitOfWork.SaveAsync();
         
         await Task.WhenAll(FilesNames.Select(x => fileService.DeleteFile(x)));
         

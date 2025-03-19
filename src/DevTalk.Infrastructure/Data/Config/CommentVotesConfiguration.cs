@@ -10,6 +10,6 @@ public class CommentVotesConfiguration : IEntityTypeConfiguration<CommentVotes>
     {
         builder.HasKey(x => x.CommentId);
         builder.Property(x => x.CommentId)
-            .HasDefaultValueSql("newid()");
+            .HasDefaultValueSql("gen_random_uuid()");
     }
 }
