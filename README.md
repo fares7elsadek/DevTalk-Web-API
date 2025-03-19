@@ -218,7 +218,7 @@ Devtalk uses cursor pagination for posts, which is significantly more efficient 
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and create a pull request for any improvements or bug fixes. For major changes, please open an issue first to discuss what you would like to change.
+Contributions are welcome! Please fork the repository and create a pull request for any improvements or bug fixes. For major changes,please open an issue first to discuss what you would like to change.
 
 ## License
 
