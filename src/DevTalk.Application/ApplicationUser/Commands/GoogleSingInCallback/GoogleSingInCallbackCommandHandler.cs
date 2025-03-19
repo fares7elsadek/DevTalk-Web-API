@@ -68,7 +68,7 @@ public class GoogleSingInCallbackCommandHandler(SignInManager<User> signInManage
                 user.FirstName = name;
                 updated = true;
             }
-            if (user.AvatarUrl != picture)
+            if ((user.AvatarUrl is null && !string.IsNullOrEmpty(picture)) || user.AvatarUrl!=picture)
             {
                 user.AvatarUrl = picture;
                 updated = true;

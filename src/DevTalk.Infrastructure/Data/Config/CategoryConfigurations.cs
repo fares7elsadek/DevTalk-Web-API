@@ -10,10 +10,10 @@ public class CategoryConfigurations : IEntityTypeConfiguration<Categories>
     {
         builder.HasKey(x => x.CategoryId);
         builder.Property(x => x.CategoryId)
-            .HasDefaultValueSql("newid()");
+            .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(x => x.CategoryName)
-            .HasColumnType("nvarchar")
+            .HasColumnType("varchar")
             .HasMaxLength(300);
 
         builder.HasMany(x => x.Posts)
@@ -23,6 +23,6 @@ public class CategoryConfigurations : IEntityTypeConfiguration<Categories>
         builder.HasMany(x => x.Preferences)
             .WithOne(x => x.Category)
             .HasForeignKey(x => x.CategoryId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

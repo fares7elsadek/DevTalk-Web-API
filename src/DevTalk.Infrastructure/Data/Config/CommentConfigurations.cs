@@ -10,13 +10,13 @@ public class CommentConfigurations : IEntityTypeConfiguration<Comment>
     {
         builder.HasKey(x => x.CommentId);
         builder.Property(x => x.CommentId)
-            .HasDefaultValueSql("newid()");
+            .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(x => x.CommentText)
-            .HasColumnType("nvarchar(max)");
+            .HasColumnType("text");
 
         builder.Property(x => x.CommentedAt)
-            .HasDefaultValueSql("GETDATE()");
+            .HasDefaultValueSql("now()");
 
         builder.HasMany(x => x.Votes)
             .WithOne(x => x.Comment)

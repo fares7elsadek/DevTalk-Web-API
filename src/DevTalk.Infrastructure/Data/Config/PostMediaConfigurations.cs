@@ -10,10 +10,10 @@ public class PostMediaConfigurations : IEntityTypeConfiguration<PostMedia>
     {
         builder.HasKey(x => x.PostMediaId);
         builder.Property(x => x.PostMediaId)
-            .HasDefaultValueSql("newid()");
+            .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(x => x.MediaUrl)
-            .HasColumnType("nvarchar(max)");
+            .HasColumnType("text");
 
     }
 }

@@ -10,9 +10,9 @@ public class NotificationConfigurations : IEntityTypeConfiguration<Notifications
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
-            .HasDefaultValueSql("newid()");
+            .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(x => x.Timestamp)
-            .HasDefaultValueSql("getdate()");
+            .HasDefaultValueSql("now()");
     }
 }

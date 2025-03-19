@@ -10,9 +10,9 @@ public class BookmarksConfigurations : IEntityTypeConfiguration<Bookmarks>
     {
         builder.HasKey(x => x.BookmarkId);
         builder.Property(x => x.BookmarkId)
-            .HasDefaultValueSql("newid()");
+            .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(x => x.CreatedDate)
-            .HasDefaultValueSql("getdate()");
+            .HasDefaultValueSql("now()");
     }
 }

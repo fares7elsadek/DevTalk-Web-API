@@ -9,15 +9,15 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.Property(x => x.FirstName)
-            .HasColumnType("nvarchar")
+            .HasColumnType("varchar")
             .HasMaxLength(300);
 
         builder.Property(x => x.LastName)
-            .HasColumnType("nvarchar")
+            .HasColumnType("varchar")
             .HasMaxLength(300);
 
         builder.Property(x => x.AvatarUrl)
-            .HasColumnType("nvarchar(max)");
+            .HasColumnType("text");
 
         builder.HasMany(x => x.Posts)
             .WithOne(x => x.User)
@@ -27,7 +27,7 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         builder.HasMany(x => x.Comments)
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.PostVotes)
             .WithOne(x => x.User)

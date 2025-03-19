@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
         var connectionString = configuration.GetConnectionString("cs");
         services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseSqlServer(connectionString, builder =>
+            options.UseNpgsql(connectionString, builder =>
             {
                 builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
             });
