@@ -188,7 +188,7 @@ Devtalk uses cursor pagination for posts, which is significantly more efficient 
    ```
 
 2. **Configure Environment Variables:**  
-   Create a `.env` file based on the provided `.env.example` and set your connection strings and API keys for services like Azure Application Insights, ElasticSearch, Redis, etc.
+   Create a `.env` file based on the provided `.env.example` and set your connection strings and  API keys for services like Azure Application Insights, ElasticSearch, Redis, etc.
 
 3. **Install Dependencies:**
 
