@@ -13,7 +13,7 @@ public class GetAllPostsCategoryQueryHandler(IUnitOfWork unitOfWork,
     public async Task<GetUserPostsDto> Handle(GetAllPostsCategoryQuery request, CancellationToken cancellationToken)
     {
         var decodedTime = DateTimeCursorOperations.Decode(request.timeCursor);
-        var posts = await unitOfWork.Post.GetFeedPostsPagination(request.IdCursor, "", decodedTime
+        var posts = await unitOfWork.Post.GetPostsByCategory(request.IdCursor, request.CategoryId, decodedTime
             , request.ScoreCursor, request.PageSize);
 
 
