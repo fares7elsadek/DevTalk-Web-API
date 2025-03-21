@@ -2,12 +2,10 @@
 using DevTalk.Application.Posts.Commands.CreatePosts;
 using DevTalk.Application.Posts.Commands.DeletePost;
 using DevTalk.Application.Posts.Commands.UpdatePosts;
-using DevTalk.Application.Posts.Dtos;
 using DevTalk.Application.Posts.Queries.GetAllPosts;
 using DevTalk.Application.Posts.Queries.GetFeedPosts;
 using DevTalk.Application.Posts.Queries.GetPostById;
 using DevTalk.Application.Posts.Queries.GetTrendingPosts;
-using DevTalk.Domain.Entites;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using MediatR;
@@ -15,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Net;
+using DevTalk.Application.Posts.Queries.GetAllPostsCategory;
 
 namespace DevTalk.API.Controllers
 {
@@ -148,9 +147,8 @@ namespace DevTalk.API.Controllers
             [FromQuery] string idCursor = "", [FromQuery] int size = 5
             )
         {
-            var userId = User.FindFirst(c => c.Type == "uid")!.Value;
             var result = await _mediator.Send(new
-                GetFeedPostsQuery(userId, idCursor, timeCursor, scoreCursor, size));
+                GetAllPostsCategoryQuery(idCursor,timeCursor,scoreCursor,size,categoryId));
             apiResponse.IsSuccess = true;
             apiResponse.StatusCode = HttpStatusCode.OK;
             apiResponse.Result = result;

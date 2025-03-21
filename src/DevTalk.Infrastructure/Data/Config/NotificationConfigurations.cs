@@ -14,5 +14,7 @@ public class NotificationConfigurations : IEntityTypeConfiguration<Notifications
 
         builder.Property(x => x.Timestamp)
             .HasDefaultValueSql("now()");
+        
+        builder.HasIndex(x => x.Timestamp);
     }
 }

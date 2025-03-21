@@ -3,6 +3,6 @@ using MediatR;
 
 namespace DevTalk.Application.Notification.Queries.GetAllNotifications;
 
-public class GetAllNotificationsQuery:IRequest<IEnumerable<NotificationDto>>
+public record GetAllNotificationsQuery(string cursor,int pageSize):IRequest<GetUserNotificationsDto>
 {
 }

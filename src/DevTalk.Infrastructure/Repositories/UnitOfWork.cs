@@ -37,7 +37,7 @@ public class UnitOfWork : IUnitOfWork
         Category = new CategoryRepository(_db);
         Bookmark = new BookmarkRepository(_db);
         Preference = new PreferenceRepository(_db);
-        Notification = new NotificationRepository(_db);
+        Notification = new NotificationRepository(_db,_connectionFactory);
     }
     public async Task SaveAsync()
     {

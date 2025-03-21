@@ -26,9 +26,10 @@ namespace DevTalk.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> GetAllNotifications()
+        public async Task<ActionResult<ApiResponse>> GetAllNotifications([FromQuery]string cursor = "",
+            int pageSize = 5)
         {
-            var notifications = await _mediator.Send(new GetAllNotificationsQuery());
+            var notifications = await _mediator.Send(new GetAllNotificationsQuery(cursor, pageSize));
             apiResponse.IsSuccess = true;
             apiResponse.StatusCode = HttpStatusCode.OK;
             apiResponse.Result = notifications;
