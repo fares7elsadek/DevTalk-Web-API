@@ -15,7 +15,7 @@ public class GetAllPostsQueryHandler(IMapper mapper,
         if (!Guid.TryParse(request.Cursor, out _))
             request.Cursor = "";
 
-        var Posts = await unitOfWork.Post.GetAllPostsPagination(request.Cursor,request.PageSize,IncludeProperties: "PostMedias,Votes,Comments,User,Categories");
+        var Posts = await unitOfWork.Post.GetAllPostsPagination(request.Cursor,request.PageSize);
         var PostDto = mapper.Map<IEnumerable<PostDto>>(Posts);
 
         var lastPost = Posts.LastOrDefault();
