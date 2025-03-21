@@ -6,8 +6,6 @@ using MediatR;
 using Moq;
 using System.Linq.Expressions;
 using Xunit;
-
-
 namespace DevTalk.Application.Bookmark.commands.CreateBookmark.Tests;
 
 public class CreateBookmarkCommandHandlerTests
@@ -21,8 +19,8 @@ public class CreateBookmarkCommandHandlerTests
         var unitOfWorkMock = new Mock<IUnitOfWork>();
         var userContextMock = new Mock<IUserContext>();
         var publisherMock = new Mock<IPublisher>();
+        
         userContextMock.Setup(uc => uc.GetCurrentUser()).Returns((CurrentUser)null);
-
         var handler = new CreateBookmarkCommandHandler(unitOfWorkMock.Object, userContextMock.Object,publisherMock.Object);
 
         // Act & Assert

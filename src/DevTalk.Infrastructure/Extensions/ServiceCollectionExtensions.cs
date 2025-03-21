@@ -11,6 +11,8 @@ using DevTalk.Domain.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using DevTalk.Domain.Abstractions;
+using DevTalk.Infrastructure.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
@@ -90,5 +92,7 @@ public static class ServiceCollectionExtensions
             var config = configuration.GetConnectionString("rediscs");
             return ConnectionMultiplexer.Connect(config);
         });
+
+        services.AddScoped<ISqlConnectionFactory, SqlConntectFactory>();
     }
 }

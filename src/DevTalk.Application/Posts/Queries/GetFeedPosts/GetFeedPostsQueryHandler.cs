@@ -13,14 +13,9 @@ public class GetFeedPostsQueryHandler(IUnitOfWork unitOfWork,
 {
     public async Task<GetUserPostsDto> Handle(GetFeedPostsQuery request, CancellationToken cancellationToken)
     {
-        var prefernces = await unitOfWork.Preference
-            .GetAllWithConditionAsync(x => x.UserId == request.UserId,
-            IncludeProperties: "Category");
-        List<string> categories = prefernces.Select(x => x.Category.CategoryId).ToList();
-
         var decodedTime = DateTimeCursorOperations.Decode(request.timeCursor);
         var posts = await unitOfWork.Post.GetFeedPostsPagination(request.IdCursor,
-            categories,decodedTime,request.ScoreCursor,request.PageSize,IncludeProperties: "PostMedias,Votes,Comments,User,Categories");
+            request.UserId,decodedTime,request.ScoreCursor,request.PageSize);
         var postsDto = mapper.Map<IEnumerable<PostDto>>(posts);
 
         if (posts.Any())

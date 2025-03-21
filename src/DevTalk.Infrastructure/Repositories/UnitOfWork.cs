@@ -4,12 +4,14 @@ using DevTalk.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Data;
+using DevTalk.Domain.Abstractions;
 
 namespace DevTalk.Infrastructure.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _db;
+    private readonly ISqlConnectionFactory _connectionFactory;
 
     public IPostRepository Post { get; private set; }
     public ICommentRepository Comment { get; private set; }
@@ -22,10 +24,11 @@ public class UnitOfWork : IUnitOfWork
     public IPreferenceRepository Preference { get; private set; }
     public INotificationRepostiory Notification { get; private set; }
 
-    public UnitOfWork(AppDbContext db,IDistributedCache cache)
+    public UnitOfWork(AppDbContext db,IDistributedCache cache,ISqlConnectionFactory connectionFactory)
     {
         _db = db;
-        Post = new PostRepository(_db);
+        _connectionFactory = connectionFactory;
+        Post = new PostRepository(_db,_connectionFactory);
         Comment = new CommentRepository(_db);
         CommentVotes = new CommentVotesRepository(_db);
         PostMedia = new PostMediaRepository(_db);

@@ -18,7 +18,7 @@ public class GetTrendingPostsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper
     {
         var decodedTime = DateTimeCursorOperations.Decode(request.timeCursor);
         var posts = await unitOfWork.Post.GetTrendingPostsPagination(request.IdCursor, decodedTime
-            , request.ScoreCursor, request.PageSize, IncludeProperties: "PostMedias,Votes,Comments,User,Categories");
+            , request.ScoreCursor, request.PageSize);
 
 
         var postsDto = mapper.Map<IEnumerable<PostDto>>(posts);
