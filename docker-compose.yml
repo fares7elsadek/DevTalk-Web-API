@@ -1,10 +1,21 @@
 services:
+  reverse-proxy:
+    image: nginx:stable
+    container_name: nginx_proxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt/:/etc/letsencrypt/
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - devtalk.api
+    networks:
+      - devtalk-network
+    restart: always
+    
   devtalk.api:
-    image: fareselsadek/devtalk
-    container_name: devtalkapp
-    build:
-      context: .
-      dockerfile: src/DevTalk.API/Dockerfile
+    image: fareselsadek/devtalk:v2
     ports:
       - "5000:5000"
       - "5001:5001"
@@ -16,17 +27,22 @@ services:
     hostname: devtalk
     env_file:
       - .env
+    restart: always
+    
   postgres:
     image: postgres:latest
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
     networks:
       - devtalk-network
     hostname: devtalk-db
     env_file:
       - .env
+    restart: always
+    
   redis:
     image: redis:latest
     ports:
@@ -37,10 +53,11 @@ services:
     command: ["redis-server", "--appendonly", "yes"]  
     volumes:
       - redis_data:/data
-
+    restart: always
+    
 volumes:
   postgres_data:
-  redis_data:  
+  redis_data:
 
 networks:
   devtalk-network:
