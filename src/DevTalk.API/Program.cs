@@ -37,7 +37,7 @@ public class Program
 
 
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCors("AllowSpecificOrigins");
             app.UseAuthentication();
