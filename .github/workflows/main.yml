@@ -3,7 +3,7 @@ name: DevTalk-CI
 on:
   pull_request:
     branches:
-    - master
+    - development
   workflow_dispatch:
 
 jobs:
