@@ -9,7 +9,8 @@
 *.user
 *.userosscache
 *.sln.docstates
-
+.env
+nginx.conf
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -363,3 +364,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /DevTalk.API/appsettings.Production.json
 /src/DevTalk.API/appsettings.Production.json
+/.env
