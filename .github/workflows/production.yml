@@ -29,6 +29,7 @@ jobs:
     environment: 
       name: 'Production'
       url: 'https://api.devtalk.me'
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -47,6 +48,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
+        file: ./src/DevTalk.API/Dockerfile
         push: true
         tags: fareselsadek/devtalk:v2
 
