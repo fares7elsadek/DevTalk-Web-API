@@ -17,7 +17,7 @@ jobs:
         with:
           dotnet-version: 9.0.x
       - name: restore dependenceis
-        run: dotnet restore
+        run: dotnet restore DevTalk.sln
       - name: Build
         run: dotnet build --no-restore
       - name: unit tests
