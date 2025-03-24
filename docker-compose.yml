@@ -1,32 +1,47 @@
 services:
-  elasticsearch:
-    container_name: elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
+  devtalk.api:
+    image: fareselsadek/devtalk
+    container_name: devtalkapp
+    build:
+      context: .
+      dockerfile: src/DevTalk.API/Dockerfile
     ports:
-      - 9200:9200
-      - 9300:9300
-    # volumes:
-    #   - elasticsearch-data:/usr/share/elasticsearch/data
-    networks:
-      - elastic-network
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:8.7.1
+      - "5000:5000"
+      - "5001:5001"
     depends_on:
-      - elasticsearch
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-    ports:
-      - 5601:5601
+      - postgres
+      - redis  
     networks:
-      - elastic-network
+      - devtalk-network
+    hostname: devtalk
+    env_file:
+      - .env
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - devtalk-network
+    hostname: devtalk-db
+    env_file:
+      - .env
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - devtalk-network  
+    hostname: devtalk-redis
+    command: ["redis-server", "--appendonly", "yes"]  
+    volumes:
+      - redis_data:/data
 
 volumes:
-  elasticsearch-data:
+  postgres_data:
+  redis_data:  
 
 networks:
-  elastic-network:
-    driver: bridge
+  devtalk-network:
+    driver: bridge 
