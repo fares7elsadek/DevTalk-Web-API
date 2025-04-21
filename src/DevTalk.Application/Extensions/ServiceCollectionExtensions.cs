@@ -47,7 +47,8 @@ public static class ServiceCollectionExtensions
         {
             options.AddPolicy("AllowSpecificOrigins", policy =>
             {
-                policy.WithOrigins("https://dev-talk-phi.vercel.app","https://localhost:3000") 
+                policy.WithOrigins("https://dev-talk-phi.vercel.app","https://localhost:3000",
+                        "http://localhost:3000" ) 
                    .AllowAnyHeader()
                    .AllowAnyMethod()
                    .AllowCredentials(); 
