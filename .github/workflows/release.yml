@@ -3,7 +3,7 @@ name: DevTalk-CD
 on:
   push:
     branches:
-    - master
+    - development
   workflow_dispatch:
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       - name: restore dependenceis
         run: dotnet restore DevTalk.sln
       - name: Build
-        run: dotnet build --no-restore -c release
+        run: dotnet build DevTalk.sln --no-restore -c release
       - name: publish
         run: dotnet publish ./src/DevTalk.API/DevTalk.API.csproj -o ${{ env.DOTNET_ROOT }}/api --no-build
       - name: Upload a Build Artifact

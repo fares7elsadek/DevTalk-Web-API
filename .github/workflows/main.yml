@@ -3,7 +3,7 @@ name: DevTalk-CI
 on:
   pull_request:
     branches:
-    - master
+    - development
   workflow_dispatch:
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       - name: restore dependenceis
         run: dotnet restore DevTalk.sln
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build DevTalk.sln --no-restore
       - name: unit tests
-        run: dotnet test
+        run: dotnet test DevTalk.sln
   
