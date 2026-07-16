@@ -15,7 +15,9 @@ services:
     restart: always
     
   devtalk.api:
-    image: fareselsadek/devtalk:v2
+    build:
+      context: ./src/DevTalk.Api
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
       - "5001:5001"
@@ -54,10 +56,57 @@ services:
     volumes:
       - redis_data:/data
     restart: always
-    
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+      - "8889:8889"   # Prometheus exporter endpoint
+    networks:
+      - devtalk-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    depends_on:
+      - otel-collector
+    networks:
+      - devtalk-network
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - devtalk-network
+
 volumes:
   postgres_data:
   redis_data:
+  prometheus-data:
+  grafana-data:
 
 networks:
   devtalk-network:
