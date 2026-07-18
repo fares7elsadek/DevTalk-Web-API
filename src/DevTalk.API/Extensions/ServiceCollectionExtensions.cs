@@ -2,6 +2,9 @@
 using DevTalk.Application.Extensions;
 using DevTalk.Domain.Helpers;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace DevTalk.API.Extensions;
 
@@ -33,5 +36,38 @@ public static class  ServiceCollectionExtensions
                 }
             });
         });
+
+        var otelResourceBuilder = ResourceBuilder.CreateDefault()
+            .AddService(builder.Environment.ApplicationName);
+
+        builder.Services.AddOpenTelemetry()
+            .WithMetrics(metrics =>
+            {
+                metrics.SetResourceBuilder(otelResourceBuilder)
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddRuntimeInstrumentation()
+                .AddMeter("DevTalk")
+                .AddOtlpExporter(otlp =>
+                {
+                    otlp.Endpoint = new Uri("http://otel-collector:4317");
+                    otlp.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                });
+            })
+            .WithTracing(tracing =>
+            {
+                tracing
+                    .SetResourceBuilder(otelResourceBuilder)
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddOtlpExporter(otlp =>
+                    {
+                        otlp.Endpoint = new Uri("http://otel-collector:4317");
+                        otlp.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                    });
+            });
+
+        
+
     }
 }
