@@ -1,4 +1,4 @@
-﻿
+﻿using DevTalk.API.Metrics;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +18,7 @@ public class ErrorHandlingMiddleware : IMiddleware
     {
         try
         {
+            DevTalkMetrics.RequestCounter.Add(1);
             await next.Invoke(context);
         }
         catch (NotFoundException ex)
