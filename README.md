@@ -2,13 +2,28 @@
   <img src="https://res.cloudinary.com/df6ylojjq/image/upload/v1736182255/devTalk_fxlk05.svg" alt="Devtalk Logo" width="200">
 </p>
 
-**Devtalk** is a social media platform for developers to share knowledge, insights, and the latest in technology. Built with a focus on performance, scalability, and maintainability, Devtalk provides a comprehensive set of RESTful APIs to manage everything from user authentication to real-time notifications.
+<h1 align="center">Devtalk</h1>
+
+<p align="center">
+  <b>A production-grade social platform for developers — built to prove what real backend engineering looks like.</b>
+</p>
+
+<p align="center">
+  Clean Architecture · CQRS · Real-Time SignalR · Redis Caching · Full Observability Stack
+</p>
+
+---
+
+## Why This Project Exists
+
+Devtalk isn't a CRUD tutorial app. It's a backend engineering playground built to tackle the same problems production systems face at scale: real-time delivery to thousands of concurrent users, cache invalidation, observability, and clean, testable architecture. Every design decision below — from cursor pagination to distributed tracing — was made the way it would be on a real engineering team, not to check a box.
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
 - [Architecture & Technologies](#architecture--technologies)
+- [Observability Stack](#observability-stack)
 - [API Endpoints](#api-endpoints)
   - [Authentication](#authentication)
   - [Bookmarks](#bookmarks)
@@ -16,7 +31,7 @@
   - [Comment](#comment)
   - [Notifications](#notifications)
   - [Post](#post)
-  - [Prefernces](#prefernces)
+  - [Preferences](#preferences)
   - [Votes](#votes)
 - [Performance Enhancements](#performance-enhancements)
 - [Installation & Setup](#installation--setup)
@@ -26,26 +41,38 @@
 
 ## Overview
 
-Devtalk is designed for developers who want to keep up with industry trends and share their experiences. It allows users to register, authenticate, create posts, comment on discussions, bookmark favorite content, vote on posts, and receive real-time notifications.
+Devtalk is designed for developers who want to keep up with industry trends and share their experiences. It allows users to register, authenticate, create posts, comment on discussions, bookmark favorite content, vote on posts, and receive real-time notifications — all backed by an API built for scale and observability from day one.
 
 ## Features
 
-- **User Management:** Secure registration, login, password recovery, and email confirmation.
-- **Content Creation:** Create, update, delete, and fetch posts with robust commenting and voting mechanisms.
-- **Bookmarks & Categories:** Organize content with bookmarks and categorize posts for a streamlined experience.
-- **Real-Time Notifications:** Instant updates via SignalR with an in-memory message queue for asynchronous operations.
-- **Scalable Architecture:** Implemented using Clean Architecture and the CQRS pattern with the Mediator library.
-- **Robust Logging & Monitoring:** Logging with Serilog, integrated with Azure Application Insights, and ElasticSearch/Kibana for deep insights.
-- **Advanced Caching:** Redis caching with an event-driven cache invalidation strategy.
-- **Efficient Pagination:** Cursor pagination for posts, offering significant performance improvements over offset pagination.
+- 🔐 **User Management:** Secure registration, login, password recovery, and email confirmation.
+- 📝 **Content Creation:** Create, update, delete, and fetch posts with robust commenting and voting mechanisms.
+- 🔖 **Bookmarks & Categories:** Organize content with bookmarks and categorize posts for a streamlined experience.
+- ⚡ **Real-Time Notifications:** Instant updates via SignalR with an in-memory message queue for asynchronous operations.
+- 🏗️ **Scalable Architecture:** Implemented using Clean Architecture and the CQRS pattern with the Mediator library.
+- 📊 **Full-Stack Observability:** Distributed tracing and metrics via **OpenTelemetry**, visualized in **Grafana** dashboards powered by **Prometheus** — giving real production-grade insight into latency, throughput, and system health.
+- 🧾 **Robust Logging & Monitoring:** Logging with Serilog, integrated with Azure Application Insights and ElasticSearch/Kibana for deep insights.
+- 🚀 **Advanced Caching:** Redis caching with an event-driven cache invalidation strategy.
+- 📄 **Efficient Pagination:** Cursor pagination for posts, offering significant performance improvements over offset pagination.
 
 ## Architecture & Technologies
 
 - **Clean Architecture & CQRS:** The application is structured with a clear separation of concerns. The CQRS pattern, implemented via the Mediator library, ensures that commands and queries are handled efficiently.
+- **Observability:** Instrumented end-to-end with **OpenTelemetry**, exporting metrics to **Prometheus** and visualized through custom **Grafana** dashboards — enabling real-time visibility into request latency, throughput, and error rates across the system.
 - **Logging & Monitoring:** Utilizes Serilog for logging, with integrations to Azure Application Insights and ElasticSearch/Kibana for robust monitoring and diagnostics.
 - **Caching:** Implements Redis for caching, coupled with an advanced event-driven cache invalidation mechanism to keep data fresh and responsive.
 - **Real-Time Communication:** Leverages SignalR for real-time user notifications along with an in-memory message queue to process asynchronous operations.
 - **Testing & CI/CD:** Testing is conducted with xUnit, and the project is integrated with continuous integration and delivery pipelines to ensure code quality and rapid deployment.
+
+## Observability Stack
+
+Devtalk ships with a full observability pipeline, not just logs:
+
+- **OpenTelemetry** instruments the API to capture distributed traces and metrics across requests, including SignalR real-time flows.
+- **Prometheus** scrapes and stores time-series metrics from the instrumented application.
+- **Grafana** dashboards turn those metrics into actionable visuals — request rates, latency percentiles, error rates, and system health at a glance.
+
+This means Devtalk isn't just monitored after something breaks — it's observable by design, the same way production services are.
 
 ## API Endpoints
 
@@ -154,7 +181,7 @@ Devtalk is designed for developers who want to keep up with industry trends and 
 - **Posts by Category:**  
   `GET /api/Post/category/{categoryId}`
 
-### Prefernces
+### Preferences
 
 - **Set Preference for a Category:**  
   `POST /api/Prefernces/{categoryId}`
@@ -178,6 +205,9 @@ Devtalk is designed for developers who want to keep up with industry trends and 
 **Cursor Pagination vs. Offset Pagination:**  
 Devtalk uses cursor pagination for posts, which is significantly more efficient than traditional offset pagination when handling large datasets. Cursor pagination reduces the performance overhead of large offset values by offering near constant-time retrieval regardless of the page depth. This results in faster load times and a more scalable solution for real-time data feeds.
 
+**Real-Time at Scale:**  
+The SignalR notification pipeline has been load-tested to handle high volumes of concurrent connections, with Redis backplane support for horizontal scaling across multiple server instances.
+
 ## Installation & Setup
 
 1. **Clone the Repository:**
@@ -188,7 +218,7 @@ Devtalk uses cursor pagination for posts, which is significantly more efficient 
    ```
 
 2. **Configure Environment Variables:**  
-   Create a `.env` file based on the provided `.env.example` and set your connection strings and  API keys for services like Azure Application Insights, ElasticSearch, Redis, etc.
+   Create a `.env` file based on the provided `.env.example` and set your connection strings and API keys for services like Azure Application Insights, ElasticSearch, Redis, Prometheus, etc.
 
 3. **Install Dependencies:**
 
@@ -202,7 +232,15 @@ Devtalk uses cursor pagination for posts, which is significantly more efficient 
    dotnet run
    ```
 
-5. **Running Tests:**
+5. **Run the Observability Stack (Prometheus & Grafana):**
+
+   ```bash
+   docker-compose up -d prometheus grafana
+   ```
+
+   Grafana dashboards will be available at `http://localhost:3000`, with metrics scraped from the API's OpenTelemetry-instrumented endpoints via Prometheus.
+
+6. **Running Tests:**
 
    ```bash
    dotnet test
@@ -223,4 +261,3 @@ Contributions are welcome! Please fork the repository and create a pull request 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
