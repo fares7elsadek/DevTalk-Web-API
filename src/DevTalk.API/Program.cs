@@ -50,7 +50,9 @@ public class Program
         }
         catch (Exception ex)
         {
+            
             Log.Fatal(ex, "Application startup failed");
+            throw;
         }
         finally
         {

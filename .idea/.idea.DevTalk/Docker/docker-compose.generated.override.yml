@@ -2,20 +2,20 @@
 services:
   devtalk.api:
     build:
-      context: "C:\\Users\\fares\\source\\repos\\DevTalk"
-      dockerfile: "src/DevTalk.API/Dockerfile"
+      context: "D:\\RiderProjects\\DevTalk-Web-API\\src\\DevTalk.Api"
+      dockerfile: "Dockerfile"
       target: "base"
     command: []
     entrypoint:
     - "dotnet"
-    - "/app/bin/Debug/net9.0/DevTalk.API.dll"
+    - "/app/bin/Debug/net10.0/DevTalk.API.dll"
     environment:
-      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net9.0/DevTalk.API.staticwebassets.runtime.CT.json"
+      ASPNETCORE_ENVIRONMENT: "Development"
       DOTNET_USE_POLLING_FILE_WATCHER: "true"
-    image: "fareselsadek/devtalk:dev"
+    image: "devtalk.api:dev"
     ports: []
     volumes:
-    - "C:\\Users\\fares\\source\\repos\\DevTalk\\src\\DevTalk.API:/app:rw"
-    - "C:\\Users\\fares\\source\\repos\\DevTalk:/src:rw"
-    - "C:\\Users\\fares\\.nuget\\packages:/home/app/.nuget/packages"
+    - "D:\\RiderProjects\\DevTalk-Web-API\\src\\DevTalk.API:/app:rw"
+    - "D:\\RiderProjects\\DevTalk-Web-API:/src:rw"
+    - "C:\\Users\\fares\\.nuget\\packages:/root/.nuget/packages"
     working_dir: "/app"

@@ -10,19 +10,20 @@ processors:
   batch: {}
 
 exporters:
-  # Expose metrics on /metrics for Prometheus to scrape
   prometheus:
     endpoint: "0.0.0.0:8889"
-  logging:
-    loglevel: info
+
+  debug:
+    verbosity: normal
 
 service:
   pipelines:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus, logging]
+      exporters: [prometheus, debug]
+
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [debug]

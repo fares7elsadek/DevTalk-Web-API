@@ -1,5 +1,4 @@
-﻿
-using DevTalk.API.Metrics;
+﻿using DevTalk.API.Metrics;
 using DevTalk.Domain.Exceptions;
 using DevTalk.Domain.Helpers;
 using Microsoft.AspNetCore.Http;
